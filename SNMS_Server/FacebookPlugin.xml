@@ -1,0 +1,130 @@
+﻿<Plugin>
+  <!-- Plugin Info -->
+  <PluginName>Facebook</PluginName>
+  
+  <PluginDescription>
+    This plugin is able to connect to facebook accounts, read and write private messages, read and write wall posts.
+  </PluginDescription>
+  
+  <PluginVersion>0.1.0</PluginVersion>
+
+  <!-- Constants for entire system -->
+  <Constant name="baseURL">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>http://www.facebook.com</ConstantValue>
+  </Constant>
+
+  <!-- Variables for entire system -->
+  <Variable name="userName">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="password">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkWall_tempWallItemId">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_tempWallItemCounter">
+    <VariableType>integer</VariableType>
+  </Variable>
+
+  <!-- Set up sequence is always run on plugin start and can be called later -->
+  <Sequence name="setup">
+    <CatenateString>
+      <Destination>password</Destination>
+      <Source1><Variable>password</Variable></Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
+  </Sequence>
+
+  <!-- Login to Facebook -->
+  <Sequence name="login">
+    <GoTo>
+      <Constant>baseURL</Constant>
+    </GoTo>
+
+    <GetItem name="userNameField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>email</SearchValue>
+    </GetItem>
+
+    <GetItem name="passwordField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>pass</SearchValue>
+    </GetItem>
+
+    <Type>
+      <Destination>userNameField</Destination>
+      <String>
+        <Variable>userName</Variable>
+      </String>
+    </Type>
+
+    <Type>
+      <Destination>passwordField</Destination>
+      <String>
+        <Variable>password</Variable>
+      </String>
+    </Type>
+      
+  </Sequence>
+
+  <!-- Go to main page -->
+  <Sequence name="main page">
+    <GetItem name="mainPageButton">
+      <ParentElement></ParentElement>
+      <SearchType>xPath</SearchType>
+      <SearchValue>//h1/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>mainPageButton</Destination>
+    </Click>
+  </Sequence>
+
+    <!-- Check messages on wall -->
+  <Sequence name="checkWall">
+    <!-- Counter Set to 0 -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <String>1[</String>
+    </SetVariable>
+
+    <!-- Wall posts loop starts here -->
+    <label>LOOP_START</label>
+    <decision></decision>
+    
+    <!-- create xpath for required post -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemId</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemId</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemId</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemId</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemId</Variable>
+      </Source1>
+      <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
+    </CatenateString>
+    
+    
+  </Sequence>
+  
+</Plugin>
+
