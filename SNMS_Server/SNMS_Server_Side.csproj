@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{3B7F0C8C-FAA2-4EC3-82D4-206B20935893}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>ConsoleApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>SNMS_Server_Side</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FacebookPlugin.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Account\Account.cs" />
+    <Compile Include="Configuation\Configuration.cs" />
+    <Compile Include="Connectivity\ConnectivityModule.cs" />
+    <Compile Include="Connectivity\WebDriver.cs" />
+    <Compile Include="Connectivity\WebElementsDictionary.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\PluginParser.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealTimeEngine\CallSequenceCommand.cs" />
+    <Compile Include="RealTimeEngine\CatenateStringCommand.cs" />
+    <Compile Include="RealTimeEngine\ClickElementWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\Command.cs" />
+    <Compile Include="RealTimeEngine\GeneralCommands.cs" />
+    <Compile Include="RealTimeEngine\GetElementByIdWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\GetElementByXPathWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\GoBackWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\GoToWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\IncreaseVariableCommand.cs" />
+    <Compile Include="RealTimeEngine\RealTimeEngine.cs" />
+    <Compile Include="RealTimeEngine\RefreshWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\Sequences\Sequence.cs" />
+    <Compile Include="RealTimeEngine\Sequences\SequenceDictionary.cs" />
+    <Compile Include="RealTimeEngine\SetVariableCommand.cs" />
+    <Compile Include="RealTimeEngine\SetVariableStringCommand.cs" />
+    <Compile Include="RealTimeEngine\SleepCommand.cs" />
+    <Compile Include="RealTimeEngine\StringCommand.cs" />
+    <Compile Include="RealTimeEngine\TypeElementWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\WebDriverCommand.cs" />
+    <Compile Include="Triggers\Trigger.cs" />
+    <Compile Include="Variables\IntVariable.cs" />
+    <Compile Include="Variables\StringVariable.cs" />
+    <Compile Include="Variables\Variable.cs" />
+    <Compile Include="Variables\VariableDictionary.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AutomationEngine\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
