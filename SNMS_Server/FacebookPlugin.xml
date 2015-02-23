@@ -42,21 +42,23 @@
 
   <!-- Login to Facebook -->
   <Sequence name="login">
-    <Label>START</Label>
+    <!-- Since GoTo is not a conditional command, it will always succeed. -->
+    <Condition>
+      <True>GET USERNAME</True>
+      <False>SKIP USERNAME</False>
+    </Condition>
     <GoTo>
       <Constant>baseURL</Constant>
     </GoTo>
 
-    <Condition>
-      <True>START</True>
-      <False>END</False>
-    </Condition>
+    <Label>GET USERNAME</Label>
     <GetItem name="userNameField">
       <ParentElement></ParentElement>
       <SearchType>ID</SearchType>
       <SearchValue>email</SearchValue>
     </GetItem>
 
+    <Label>SKIP USERNAME</Label>
     <GetItem name="passwordField">
       <ParentElement></ParentElement>
       <SearchType>ID</SearchType>
@@ -70,7 +72,6 @@
       </String>
     </Type>
 
-    <Label>END</Label>
     <Type>
       <Destination>passwordField</Destination>
       <String>
@@ -93,6 +94,7 @@
     </Click>
   </Sequence>
 
+  
     <!-- Check messages on wall -->
   <Sequence name="checkWall">
     <!-- Counter Set to 0 -->
@@ -100,10 +102,6 @@
       <Destination>checkWall_tempWallItemCounter</Destination>
       <String>1[</String>
     </SetVariable>
-
-    <!-- Wall posts loop starts here -->
-    <label>LOOP_START</label>
-    <decision></decision>
     
     <!-- create xpath for required post -->
     <SetVariable>

@@ -38,7 +38,7 @@ namespace SNMS_Server.Plugins
             switch (sCommandName)
             {
                 case "CatenateString":
-                    sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText;
+                    sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
                     if (plugin.GetVariable(sCommandDestination) == null)
                     {
                         errorString = "Invalid Catenate String Destination";
@@ -48,7 +48,7 @@ namespace SNMS_Server.Plugins
                     commandSource1 = commandNode.SelectSingleNode("Source1");
                     if (commandSource1.HasChildNodes && commandSource1.ChildNodes[0].NodeType != XmlNodeType.Text)
                     {
-                        sCommandSource1 = commandSource1.ChildNodes[0].InnerText;
+                        sCommandSource1 = commandSource1.ChildNodes[0].InnerText.ToLower();
                         bIsCommandSource1Variable = true;
                         if (plugin.GetVariable(sCommandSource1) == null)
                         {
@@ -65,7 +65,7 @@ namespace SNMS_Server.Plugins
                     commandSource2 = commandNode.SelectSingleNode("Source2");
                     if (commandSource2.HasChildNodes && commandSource2.ChildNodes[0].NodeType != XmlNodeType.Text)
                     {
-                        sCommandSource2 = commandSource2.ChildNodes[0].InnerText;
+                        sCommandSource2 = commandSource2.ChildNodes[0].InnerText.ToLower();
                         bIsCommandSource2Variable = true;
                         if (plugin.GetVariable(sCommandSource2) == null)
                         {
@@ -345,27 +345,31 @@ namespace SNMS_Server.Plugins
                 foreach (XmlNode commandNode in commandNodes)
                 {
                     string sCommandName = commandNode.Name;
-                    switch (sCommandName.ToLower())
+                    XmlNodeType nodeType = commandNode.NodeType;
+
+                    if (nodeType != XmlNodeType.Comment)
                     {
-                        case "":
-                            break;
+                        switch (sCommandName.ToLower())
+                        {
+                            case "":
+                                break;
 
-                        case "label":
-                            labelDictionary.Add(commandNode.InnerText, dwCurrentNodeIndex);
-                            break;
+                            case "label":
+                                labelDictionary.Add(commandNode.InnerText, dwCurrentNodeIndex);
+                                break;
 
-                        case "condition":
-                            trueConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("True").InnerText);
-                            falseConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("False").InnerText);
-                            bIsCurrentNodeConditional = true;
-                            break;
+                            case "condition":
+                                trueConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("True").InnerText);
+                                falseConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("False").InnerText);
+                                bIsCurrentNodeConditional = true;
+                                break;
 
-
-                        default:
-                            HandleCommand(plugin, sequence, sequenceName, commandNode, bIsCurrentNodeConditional, ref errorString);
-                            dwCurrentNodeIndex++;
-                            bIsCurrentNodeConditional = false;
-                            break;
+                            default:
+                                HandleCommand(plugin, sequence, sequenceName, commandNode, bIsCurrentNodeConditional, ref errorString);
+                                dwCurrentNodeIndex++;
+                                bIsCurrentNodeConditional = false;
+                                break;
+                        }
                     }
                 }
 
@@ -394,7 +398,7 @@ namespace SNMS_Server.Plugins
                             return null;
                         }
                         dwNextIndex = labelDictionary[sLabel];
-                        sequence.UpdateSequenceNodeNextNodeValue(dwCurrentNodeIndex, true, dwNextIndex);
+                        sequence.UpdateSequenceNodeNextNodeValue(dwCurrentNodeIndex, false, dwNextIndex);
                     }
 
                     else

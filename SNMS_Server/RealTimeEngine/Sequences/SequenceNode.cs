@@ -10,11 +10,13 @@ namespace SNMS_Server.RealTimeEngine.Sequences
     {
         bool m_bIsConditionalNode;
         Command m_command;
+        int m_dwIndex;
         int m_dwNextNode;
         int m_dwNextNodeIfConditionFailed;
 
-        public SequenceNode(Command command, bool bIsConditional = false)
+        public SequenceNode(int dwIndex, Command command, bool bIsConditional = false)
         {
+            m_dwIndex = dwIndex;
             m_bIsConditionalNode = bIsConditional;
             m_command = command;
             m_dwNextNode = -1;
@@ -62,6 +64,11 @@ namespace SNMS_Server.RealTimeEngine.Sequences
         public bool IsNodeConditional()
         {
             return m_bIsConditionalNode;
+        }
+
+        public int GetIndex()
+        {
+            return m_dwIndex;
         }
     }
 }

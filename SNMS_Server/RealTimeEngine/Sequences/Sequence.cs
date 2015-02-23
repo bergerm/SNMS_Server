@@ -32,7 +32,8 @@ namespace SNMS_Server.RealTimeEngine.Sequences
 
         void Add(Command command, bool isConditional = false)
         {
-            m_sequenceNodesList.Add(new SequenceNode(command, isConditional));
+            int index = m_sequenceNodesList.Count;
+            m_sequenceNodesList.Add(new SequenceNode(index, command, isConditional));
         }
 
         public void AddCommand(StringCommand command, bool isConditional = false)
@@ -83,12 +84,42 @@ namespace SNMS_Server.RealTimeEngine.Sequences
 
         public void Run(ref string sErrorString)
         {
-            foreach (SequenceNode node in m_sequenceNodesList)
+            if (m_sequenceNodesList.Count <= 0)
             {
-                Command cmd = node.GetCommand();
+                sErrorString = sErrorString + "Sequence " + m_sSequenceName + " is empty! - ABORTED; ";
+                return;
+            }
+            SequenceNode currentNode = m_sequenceNodesList[0];
+
+            while (currentNode != null)
+            {
+                Command cmd = currentNode.GetCommand();
+                bool bConditionResult = true;
+
                 if (!cmd.Execute())
                 {
-                    sErrorString = sErrorString + "error on command " + cmd.GetSubType() + " on sequence " + m_sSequenceName + " ; ";
+                    sErrorString = sErrorString + "error on command " + cmd.GetSubType() + " (index " + currentNode.GetIndex() + ") on sequence " + m_sSequenceName + " ; ";
+                    return;
+                }
+
+                if (currentNode.IsNodeConditional())
+                {
+                    string sResultString = m_variableDictionary.GetVariable("systemResultString").GetString().ToLower();
+                    if (sResultString == "false")
+                    {
+                        bConditionResult = false;
+                    }
+                }
+
+                int dwNextNodeIndex = currentNode.GetNextNode(bConditionResult);
+
+                if (dwNextNodeIndex < 0 || dwNextNodeIndex >= m_sequenceNodesList.Count)
+                {
+                    currentNode = null;
+                }
+                else
+                {
+                    currentNode = m_sequenceNodesList[dwNextNodeIndex];
                 }
             }
         }
