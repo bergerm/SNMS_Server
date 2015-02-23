@@ -34,7 +34,7 @@ namespace SNMS_Server.RealTimeEngine
             return CommandLogic();
         }
 
-        public string GetType()
+        public string GetCommandType()
         {
             return m_sCommandType;
         }

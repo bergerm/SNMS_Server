@@ -79,9 +79,11 @@
     <Compile Include="RealTimeEngine\CallSequenceCommand.cs" />
     <Compile Include="RealTimeEngine\CatenateStringCommand.cs" />
     <Compile Include="RealTimeEngine\Command.cs" />
+    <Compile Include="RealTimeEngine\CheckTriggerCommand.cs" />
     <Compile Include="RealTimeEngine\GeneralCommands.cs" />
     <Compile Include="RealTimeEngine\IncreaseVariableCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\SequenceDictionary.cs" />
+    <Compile Include="RealTimeEngine\Sequences\SequenceLink.cs" />
     <Compile Include="RealTimeEngine\SetVariableCommand.cs" />
     <Compile Include="RealTimeEngine\SetVariableStringCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\Sequence.cs" />

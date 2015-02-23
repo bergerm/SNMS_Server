@@ -20,6 +20,7 @@ namespace SNMS_Server.Plugins
 
         bool HandleCommand( Plugin plugin,
                             Sequence sequence,
+                            string sSequenceName,
                             XmlNode commandNode,
                             ref string errorString)
         {
@@ -202,9 +203,11 @@ namespace SNMS_Server.Plugins
                     break;
 
                 default:
-                    errorString = "Invalid command " + sCommandName + " in sequence " + sequenceName;
+                    errorString = "Invalid command " + sCommandName + " in sequence " + sSequenceName;
                     return false;
             }
+
+            return true;
         }
 
         public Plugin ParsePlugin(string sFileName, ref string errorString)
@@ -330,7 +333,7 @@ namespace SNMS_Server.Plugins
 
                 foreach (XmlNode commandNode in commandNodes)
                 {
-                    HandleCommand(plugin, sequence, commandNode, ref errorString);
+                    HandleCommand(plugin, sequence, sequenceName, commandNode, ref errorString);
                 }
                 plugin.AddSequence(sequenceName, sequence);
             }

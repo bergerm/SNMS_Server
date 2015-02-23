@@ -16,7 +16,7 @@ namespace SNMS_Server.RealTimeEngine.Sequences
         VariableDictionary m_variableDictionary;
         WebElementsDictionary m_webDriverElementDictionary;
         WebDriver m_webDriver;
-        List<Command> m_commandList;
+        List<SequenceNode> m_sequenceNodesList;
 
         public Sequence(    string sSequenceName,
                             VariableDictionary varDict,
@@ -27,12 +27,12 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             m_variableDictionary = varDict;
             m_webDriverElementDictionary = webElementDict;
             m_webDriver = webDriver;
-            m_commandList = new List<Command>();
+            m_sequenceNodesList = new List<SequenceNode>();
         }
 
         void Add(Command command)
         {
-            m_commandList.Add(command);
+            m_sequenceNodesList.Add(new SequenceNode(command));
         }
 
         public void AddCommand(StringCommand command)
@@ -55,10 +55,32 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             Add(command);
         }
 
+        public void UpdateCommandsVariableDictionary(VariableDictionary newDict)
+        {
+            foreach (SequenceNode node in m_sequenceNodesList)
+            {
+                node.GetCommand().SetVariableDictionary(newDict);
+            }
+        }
+
+        public void UpdateCommandsWebDriver(WebDriver newWebDriver, WebElementsDictionary newDict)
+        {
+            foreach (SequenceNode node in m_sequenceNodesList)
+            {
+                Command cmd = node.GetCommand();
+                if (cmd.GetCommandType() == "WebDriver")
+                {
+                    ((WebDriverCommand)cmd).SetWebDriver(newWebDriver);
+                    ((WebDriverCommand)cmd).SetWebElementsDictionary(newDict);
+                }
+            }
+        }
+
         public void Run(ref string sErrorString)
         {
-            foreach (Command cmd in m_commandList)
+            foreach (SequenceNode node in m_sequenceNodesList)
             {
+                Command cmd = node.GetCommand();
                 if (!cmd.Execute())
                 {
                     sErrorString = sErrorString + "error on command " + cmd.GetSubType() + " on sequence " + m_sSequenceName + " ; ";
