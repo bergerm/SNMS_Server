@@ -30,29 +30,34 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             m_sequenceNodesList = new List<SequenceNode>();
         }
 
-        void Add(Command command)
+        void Add(Command command, bool isConditional = false)
         {
-            m_sequenceNodesList.Add(new SequenceNode(command));
+            m_sequenceNodesList.Add(new SequenceNode(command, isConditional));
         }
 
-        public void AddCommand(StringCommand command)
+        public void AddCommand(StringCommand command, bool isConditional = false)
         {
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command);
+            Add(command, isConditional);
         }
 
-        public void AddCommand(WebDriverCommand command)
+        public void AddCommand(WebDriverCommand command, bool isConditional = false)
         {
             command.SetWebDriver(m_webDriver);
             command.SetWebElementsDictionary(m_webDriverElementDictionary);
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command);
+            Add(command, isConditional);
         }
 
-        public void AddCommand(GeneralCommand command)
+        public void AddCommand(GeneralCommand command, bool isConditional = false)
         {
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command);
+            Add(command, isConditional);
+        }
+
+        public void UpdateSequenceNodeNextNodeValue(int dwNodeIndex, bool bCondition, int dwNewNextNode)
+        {
+            m_sequenceNodesList[dwNodeIndex].SetNextNode(dwNewNextNode, bCondition);
         }
 
         public void UpdateCommandsVariableDictionary(VariableDictionary newDict)

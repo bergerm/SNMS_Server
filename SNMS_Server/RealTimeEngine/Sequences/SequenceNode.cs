@@ -10,41 +10,48 @@ namespace SNMS_Server.RealTimeEngine.Sequences
     {
         bool m_bIsConditionalNode;
         Command m_command;
-        SequenceNode m_nextNode;
-        SequenceNode m_nextNodeIfConditionFailed;
+        int m_dwNextNode;
+        int m_dwNextNodeIfConditionFailed;
 
         public SequenceNode(Command command, bool bIsConditional = false)
         {
             m_bIsConditionalNode = bIsConditional;
             m_command = command;
-            m_nextNode = null;
-            m_nextNodeIfConditionFailed = null;
+            m_dwNextNode = -1;
+            m_dwNextNodeIfConditionFailed = -1;
         }
 
-        public void SetNextNode(SequenceNode nextNode, bool bCondition = true)
+        public bool SetNextNode(int dwNextNode, bool bCondition = true)
         {
+            if (!m_bIsConditionalNode && !bCondition)
+            {
+                return false;
+            }
+
             if (bCondition)
             {
-                m_nextNode = nextNode;
+                m_dwNextNode = dwNextNode;
             }
             else
             {
-                m_nextNodeIfConditionFailed = nextNode;
+                m_dwNextNodeIfConditionFailed = dwNextNode;
             }
+
+            return true;
         }
 
-        public SequenceNode GetNextNode(bool bConditionSucces)
+        public int GetNextNode(bool bConditionSucces)
         {
             if (m_bIsConditionalNode && !bConditionSucces)
             {
-                return null;
+                return -1;
             }
 
             if (bConditionSucces)
             {
-                return m_nextNode;
+                return m_dwNextNode;
             }
-            return m_nextNodeIfConditionFailed;
+            return m_dwNextNodeIfConditionFailed;
         }
 
         public Command GetCommand()

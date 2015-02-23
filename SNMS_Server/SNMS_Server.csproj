@@ -83,7 +83,7 @@
     <Compile Include="RealTimeEngine\GeneralCommands.cs" />
     <Compile Include="RealTimeEngine\IncreaseVariableCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\SequenceDictionary.cs" />
-    <Compile Include="RealTimeEngine\Sequences\SequenceLink.cs" />
+    <Compile Include="RealTimeEngine\Sequences\SequenceNode.cs" />
     <Compile Include="RealTimeEngine\SetVariableCommand.cs" />
     <Compile Include="RealTimeEngine\SetVariableStringCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\Sequence.cs" />

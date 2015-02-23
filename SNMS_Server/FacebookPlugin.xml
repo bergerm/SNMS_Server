@@ -42,10 +42,15 @@
 
   <!-- Login to Facebook -->
   <Sequence name="login">
+    <Label>START</Label>
     <GoTo>
       <Constant>baseURL</Constant>
     </GoTo>
 
+    <Condition>
+      <True>START</True>
+      <False>END</False>
+    </Condition>
     <GetItem name="userNameField">
       <ParentElement></ParentElement>
       <SearchType>ID</SearchType>
@@ -65,6 +70,7 @@
       </String>
     </Type>
 
+    <Label>END</Label>
     <Type>
       <Destination>passwordField</Destination>
       <String>

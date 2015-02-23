@@ -22,6 +22,7 @@ namespace SNMS_Server.Plugins
                             Sequence sequence,
                             string sSequenceName,
                             XmlNode commandNode,
+                            bool isConditionalNode,
                             ref string errorString)
         {
             string sCommandName = commandNode.Name;
@@ -331,10 +332,81 @@ namespace SNMS_Server.Plugins
                 
                 XmlNodeList commandNodes = sequenceNode.ChildNodes;
 
+                // used to connect a label to the node index
+                Dictionary<string, int> labelDictionary = new Dictionary<string, int>();
+                // ued to track to which labels a specific node is connected if condition is true (or no condition). (null or nonexistent means the next item)
+                Dictionary<int, string> trueConditionDetinationLabelDictionary = new Dictionary<int, string>();
+                // ued to track to which labels a specific node is connected if condition is false.
+                Dictionary<int, string> falseConditionDetinationLabelDictionary = new Dictionary<int, string>();
+
+                int dwCurrentNodeIndex = 0;
+                bool bIsCurrentNodeConditional = false;
+
                 foreach (XmlNode commandNode in commandNodes)
                 {
-                    HandleCommand(plugin, sequence, sequenceName, commandNode, ref errorString);
+                    string sCommandName = commandNode.Name;
+                    switch (sCommandName.ToLower())
+                    {
+                        case "":
+                            break;
+
+                        case "label":
+                            labelDictionary.Add(commandNode.InnerText, dwCurrentNodeIndex);
+                            break;
+
+                        case "condition":
+                            trueConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("True").InnerText);
+                            falseConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("False").InnerText);
+                            bIsCurrentNodeConditional = true;
+                            break;
+
+
+                        default:
+                            HandleCommand(plugin, sequence, sequenceName, commandNode, bIsCurrentNodeConditional, ref errorString);
+                            dwCurrentNodeIndex++;
+                            bIsCurrentNodeConditional = false;
+                            break;
+                    }
                 }
+
+
+                // Update all sequenceNodes' next values
+                int dwPluginSize = dwCurrentNodeIndex;
+                dwCurrentNodeIndex = 0;
+
+                for (; dwCurrentNodeIndex < dwPluginSize; dwCurrentNodeIndex++)
+                {
+                    if (trueConditionDetinationLabelDictionary.ContainsKey(dwCurrentNodeIndex))
+                    {
+                        string sLabel = trueConditionDetinationLabelDictionary[dwCurrentNodeIndex];
+                        if (!labelDictionary.ContainsKey(sLabel))
+                        {
+                            errorString = "Label " + sLabel + " does not exist in sequence " + sequenceName + " of plugin " + plugin.GetPluginName();
+                            return null;
+                        }
+                        int dwNextIndex = labelDictionary[sLabel];
+                        sequence.UpdateSequenceNodeNextNodeValue(dwCurrentNodeIndex, true, dwNextIndex);
+
+                        sLabel = falseConditionDetinationLabelDictionary[dwCurrentNodeIndex];
+                        if (!labelDictionary.ContainsKey(sLabel))
+                        {
+                            errorString = "Label " + sLabel + " does not exist in sequence " + sequenceName + " of plugin " + plugin.GetPluginName();
+                            return null;
+                        }
+                        dwNextIndex = labelDictionary[sLabel];
+                        sequence.UpdateSequenceNodeNextNodeValue(dwCurrentNodeIndex, true, dwNextIndex);
+                    }
+
+                    else
+                    {
+                        // Last element check
+                        if (dwCurrentNodeIndex + 1 < dwPluginSize)
+                        {
+                            sequence.UpdateSequenceNodeNextNodeValue(dwCurrentNodeIndex, true, dwCurrentNodeIndex + 1);
+                        }
+                    }
+                }
+
                 plugin.AddSequence(sequenceName, sequence);
             }
 
