@@ -1,0 +1,12 @@
+﻿<!-- Catenate: <Destination> = <Source1> + <Source2> -->
+<CatenateString>
+  <!-- name of defined variable -->
+  <Destination>var</Destination>
+  <!-- source 1 -->
+  <Source1>
+    <!-- in this case it's a variable, but it can be normal text -->
+    <Variable>var</Variable>
+  </Source1>
+  <!-- source 2 -->
+  <Source2>\n</Source2>
+</CatenateString>

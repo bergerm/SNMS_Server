@@ -80,6 +80,8 @@
     <Compile Include="RealTimeEngine\CatenateStringCommand.cs" />
     <Compile Include="RealTimeEngine\Command.cs" />
     <Compile Include="RealTimeEngine\CheckTriggerCommand.cs" />
+    <Compile Include="RealTimeEngine\CompareVariableCommand.cs" />
+    <Compile Include="RealTimeEngine\DecreaseVariableCommand.cs" />
     <Compile Include="RealTimeEngine\GeneralCommands.cs" />
     <Compile Include="RealTimeEngine\IncreaseVariableCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\SequenceDictionary.cs" />
@@ -111,6 +113,7 @@
     <Content Include="FacebookPlugin.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="sampleCommands.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AutomationEngine\" />

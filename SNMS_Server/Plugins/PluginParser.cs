@@ -196,11 +196,25 @@ namespace SNMS_Server.Plugins
                     sequence.AddCommand(setVariableCommand);
                     break;
 
+                case "CompareVariable":
+                    string sCompareVariable1Name = commandNode.SelectSingleNode("Source1").InnerText;
+                    string sCompareVariable2Name = commandNode.SelectSingleNode("Source2").InnerText;
+                    CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
+                    sequence.AddCommand(compareVariableCommand, isConditionalNode);
+                    break;
+
                 case "IncreaseVariable":
                     string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
                     int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("String").InnerText);
                     IncreaseVariableCommand increaseVariableCommand = new IncreaseVariableCommand(sIncreaseVariableName, dwIncreaseVariableValue);
                     sequence.AddCommand(increaseVariableCommand);
+                    break;
+
+                case "DecreaseVariable":
+                    string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
+                    int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("String").InnerText);
+                    DecreaseVariableCommand decreaseVariableCommand = new DecreaseVariableCommand(sDecreaseVariableName, dwDecreaseVariableValue);
+                    sequence.AddCommand(decreaseVariableCommand);
                     break;
 
                 default:

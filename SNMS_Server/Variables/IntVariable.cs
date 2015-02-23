@@ -26,6 +26,11 @@ namespace SNMS_Server.Variables
             m_dwValue += dwIncreaseSize;
         }
 
+        public void Decrease(int dwDecreaseSize)
+        {
+            m_dwValue -= dwDecreaseSize;
+        }
+
         override public string GetString()
         {
             return m_dwValue.ToString();

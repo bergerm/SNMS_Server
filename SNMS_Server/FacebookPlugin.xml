@@ -94,15 +94,15 @@
     </Click>
   </Sequence>
 
-  
-    <!-- Check messages on wall -->
+  <!-- Check messages on wall -->
   <Sequence name="checkWall">
     <!-- Counter Set to 0 -->
     <SetVariable>
       <Destination>checkWall_tempWallItemCounter</Destination>
       <String>1[</String>
     </SetVariable>
-    
+
+    <Label>WALL ITEM LOOP</Label>
     <!-- create xpath for required post -->
     <SetVariable>
       <Destination>checkWall_tempWallItemId</Destination>
