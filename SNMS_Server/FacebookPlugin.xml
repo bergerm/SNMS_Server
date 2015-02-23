@@ -7,6 +7,12 @@
   </PluginDescription>
   
   <PluginVersion>0.1.0</PluginVersion>
+  
+  <!-- Mandatory Variables! These are obligatory in EVERY plugin and must not be used by any command -->
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemResultString">
+    <VariableType>string</VariableType>
+  </Variable>
 
   <!-- Constants for entire system -->
   <Constant name="baseURL">
