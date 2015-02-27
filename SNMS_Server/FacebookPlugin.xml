@@ -192,6 +192,7 @@
     <Jump>X MINUTES</Jump>
 
     <!-- Check if the item was posted minutes ago or hours, days, etc... -->
+    <Label>MINUTES OR HOURS</Label>
     <Condition>
       <True>X MINUTES</True>
       <False>FINISHED</False>

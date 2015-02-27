@@ -44,7 +44,7 @@ namespace SNMS_Server.RealTimeEngine.Sequences
 
         public int GetNextNode(bool bConditionSucces)
         {
-            if (m_bIsConditionalNode && !bConditionSucces)
+            if (!m_bIsConditionalNode && !bConditionSucces)
             {
                 return -1;
             }

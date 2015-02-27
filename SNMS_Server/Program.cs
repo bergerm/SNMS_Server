@@ -21,6 +21,13 @@ namespace SNMS_Server
             PluginParser parser = new PluginParser();
             Plugin plugin = parser.ParsePlugin("..\\..\\FacebookPlugin.xml", ref sErrorString);
 
+            if (sErrorString != "")
+            {
+                System.Console.WriteLine(sErrorString);
+                System.Console.ReadLine();
+                return;
+            }
+
             Sequence login = plugin.GetSequence("login");
 
             plugin.SetVariable("userName", "marmaulucas@gmail.com");

@@ -249,8 +249,8 @@ namespace SNMS_Server.Plugins
                     break;
 
                 case "CompareVariables":
-                    string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText;
-                    string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText;
+                    string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText.ToLower();
+                    string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText.ToLower();
                     CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
                     sequence.AddCommand(compareVariableCommand, isConditionalNode);
                     break;
@@ -333,7 +333,7 @@ namespace SNMS_Server.Plugins
                     break;
 
                 case "VariableContains":
-                    string sVariableContainsName = commandNode.SelectSingleNode("VariableName").InnerText;
+                    string sVariableContainsName = commandNode.SelectSingleNode("VariableName").InnerText.ToLower();
                     XmlNode variableContainsSourceNode = commandNode.SelectSingleNode("Source");
                     string sVariableContainsSource = "";
                     bool bVariableContainsSourceVariable = false;

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SNMS_Server.Variables;
 
+using System.Text.RegularExpressions;
+
 namespace SNMS_Server.RealTimeEngine
 {
     class GreaterThanCommand : GeneralCommand
@@ -13,6 +15,8 @@ namespace SNMS_Server.RealTimeEngine
         bool m_bIsSource1Variable;
         string m_sSource2;
         bool m_bIsSource2Variable;
+
+        protected static Regex digitsOnly = new Regex(@"[^\d]");
 
         public GreaterThanCommand(string sSource1, bool bIsSource1Variable, string sSource2, bool bIsSource2Variable)
             : base("GreaterThan")
@@ -26,22 +30,25 @@ namespace SNMS_Server.RealTimeEngine
         protected override bool CommandLogic()
         {
             int num1, num2;
+            string sTempString
 
-            if (m_bIsSource1Variable)
+            if (m_bIsSource1Variable) 
             {
                 Variable tempVar = m_variableDictionary.GetVariable(m_sSource1);
                 if (tempVar == null)
-                {
+                { 
                     return false;
                 }
 
-                num1 = Int32.Parse(tempVar.ToString());
+                sTempString = tempVar.GetString();
+                sTempString = digitsOnly.Replace(sTempString, "");    
             }
             else
             {
-                num1 = Int32.Parse(m_sSource1);
+                sTempString = digitsOnly.Replace(m_sSource1, "");
             }
 
+            num1 = Int32.Parse(sTempString);
 
             if (m_bIsSource2Variable)
             {
@@ -51,12 +58,15 @@ namespace SNMS_Server.RealTimeEngine
                     return false;
                 }
 
-                num2 = Int32.Parse(tempVar.ToString());
+                sTempString = tempVar.GetString();
+                sTempString = digitsOnly.Replace(sTempString, "");  
             }
             else
             {
-                num2 = Int32.Parse(m_sSource2);
+                sTempString = digitsOnly.Replace(m_sSource2, "");
             }
+
+            num2 = Int32.Parse(sTempString);
 
             string sResult;
             if (num1 > num2)
