@@ -97,7 +97,26 @@ namespace SNMS_Server.Plugins
                     string sGetItemName = commandNode.Attributes["name"].Value.ToLower();
                     string sGetItemParentElement = commandNode.SelectSingleNode("ParentElement").InnerText.ToLower();
                     string sGetItemSearchType = commandNode.SelectSingleNode("SearchType").InnerText.ToLower();
-                    string sGetItemSearchValue = commandNode.SelectSingleNode("SearchValue").InnerText;
+                    //string sGetItemSearchValue = commandNode.SelectSingleNode("SearchValue").InnerText;
+                    string sGetItemSearchValue = "";
+                    bool bGetItemSearchValueVariable = false;
+
+                    if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sGetItemSearchValue = commandNode.ChildNodes[0].InnerText;
+                        bGetItemSearchValueVariable = true;
+                        if (plugin.GetVariable(sGetItemSearchValue) == null)
+                        {
+                            errorString = "Invalid Get Item Search Value";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sGetItemSearchValue = commandNode.InnerText;
+                        bIsCommandSource2Variable = false;
+                    }
+
 
                     if (sGetItemName == "" || sGetItemSearchType == "" || sGetItemSearchValue == "")
                     {
@@ -115,14 +134,16 @@ namespace SNMS_Server.Plugins
                     {
                         GetElementByIdWebDriverCommand getItemByID = new GetElementByIdWebDriverCommand(sGetItemParentElement,
                                                                                                             sGetItemName,
-                                                                                                            sGetItemSearchValue);
+                                                                                                            sGetItemSearchValue,
+                                                                                                            bGetItemSearchValueVariable);
                         sequence.AddCommand(getItemByID);
                     }
                     else if (sGetItemSearchType == "xpath")
                     {
                         GetElementByXPathWebDriverCommand getItemByXPath = new GetElementByXPathWebDriverCommand(sGetItemParentElement,
                                                                                                             sGetItemName,
-                                                                                                            sGetItemSearchValue);
+                                                                                                            sGetItemSearchValue,
+                                                                                                            bGetItemSearchValueVariable);
                         sequence.AddCommand(getItemByXPath);
                     }
                     break;

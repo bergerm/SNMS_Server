@@ -12,27 +12,40 @@ namespace SNMS_Server.RealTimeEngine
         string m_parentElementName;
         string m_destinationElementName;
         string m_sId;
+        bool m_bIdIsVariable;
 
         public GetElementByIdWebDriverCommand(  string parentElementName,
                                                 string destinationElementName,
-                                                String Id) : base("GetElementById")
+                                                String Id,
+                                                bool bIdIsVariable ) : base("GetElementById")
         {
             m_parentElementName = parentElementName;
             m_destinationElementName = destinationElementName;
             m_sId = Id;
+            m_bIdIsVariable = bIdIsVariable;
         }
 
         override protected bool CommandLogic()
         {
             WebDriver.WebDriverElement tempElement = null;
 
-            if ("" != m_parentElementName)
+            string sElementId = "";
+            if (m_bIdIsVariable)
             {
-                tempElement = m_webDriver.GetElementById(m_webElementsDictionary.GetElement(m_parentElementName), m_sId);
+                sElementId = m_variableDictionary.GetVariable(m_sId).GetString();
             }
             else
             {
-                tempElement = m_webDriver.GetElementById(null, m_sId);
+                sElementId = m_sId;
+            }
+
+            if ("" != m_parentElementName)
+            {
+                tempElement = m_webDriver.GetElementById(m_webElementsDictionary.GetElement(m_parentElementName), sElementId);
+            }
+            else
+            {
+                tempElement = m_webDriver.GetElementById(null, sElementId);
             }
 
             m_webElementsDictionary.SetElement(m_destinationElementName,tempElement);

@@ -34,12 +34,25 @@
     <VariableType>string</VariableType>
   </Variable>
   
-  <Variable name="checkWall_tempWallItemId">
+  <Variable name="checkWall_tempWallItemCounter">
+    <VariableType>integer</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoXpath">
     <VariableType>string</VariableType>
   </Variable>
 
-  <Variable name="checkWall_tempWallItemCounter">
-    <VariableType>integer</VariableType>
+  <Constant name="checkWall_tempWallItemMinutesAgoNOW">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>Just now</ConstantValue>
+  </Constant>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoMax">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_postMinuesAgo">
+    <VariableType>string</VariableType>
   </Variable>
 
   <!-- Set up sequence is always run on plugin start and can be called later -->
@@ -110,20 +123,20 @@
     <!-- Counter Set to 0 -->
     <SetVariable>
       <Destination>checkWall_tempWallItemCounter</Destination>
-      <String>1[</String>
+      <String>1</String>
     </SetVariable>
 
     <Label>WALL ITEM LOOP</Label>
     <!-- create xpath for required post -->
     <SetVariable>
-      <Destination>checkWall_tempWallItemId</Destination>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
       <String>//div[</String>
     </SetVariable>
 
     <CatenateString>
-      <Destination>checkWall_tempWallItemId</Destination>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
       <Source1>
-        <Variable>checkWall_tempWallItemId</Variable>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
       </Source1>
       <Source2>
         <Variable>checkWall_tempWallItemCounter</Variable>
@@ -131,13 +144,75 @@
     </CatenateString>
 
     <CatenateString>
-      <Destination>checkWall_tempWallItemId</Destination>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
       <Source1>
-        <Variable>checkWall_tempWallItemId</Variable>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
       </Source1>
       <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
     </CatenateString>
+
+    <GetItem name="checkWall_minutesAgoText">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </SearchValue>
+    </GetItem>
     
+    <GetInnerTextFromItem>
+      <Source>checkWall_minutesAgoText</Source>
+      <Destination>checkWall_postMinuesAgo</Destination>
+    </GetInnerTextFromItem>
+
+    <Condition>
+      <True>JUST NOW</True>
+      <False>X MINUTES</False>
+    </Condition>
+    <CompareVariables>
+      <Source1>checkWall_postMinuesAgo</Source1>
+      <Source2>checkWall_tempWallItemMinutesAgoNOW</Source2>
+    </CompareVariables>
+
+    <Label>JUST NOW</Label>
+    <Destination>checkWall_postMinuesAgo</Destination>
+    <String>0</String>
+
+    <Label>X MINUTES</Label>
+    <Condition>
+      <True>FINISHED</True>
+      <False>CONTINUE</False>
+    </Condition>
+    <GreaterThan>
+      <Source1>
+        <Variable>checkWall_postMinuesAgo</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemMinutesAgoMax</Variable>
+      </Source2>
+    </GreaterThan>
+    
+    <GetItem name="checkWall_itemText">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>../../../../../../../../../..//p</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <GetInnerTextFromItem>
+      <Source>checkWall_postText</Source>
+      <Destination>checkWall_itemText</Destination>
+    </GetInnerTextFromItem>
+
+    <CheckTriggers>
+      <TriggerType>wallPost</TriggerType>
+      <Reaction>ReactToWallPost</Reaction>
+    </CheckTriggers>
+
+    <Jump>WALL ITEM LOOP</Jump>
+
+    <Label>FINISHED</Label>
+    <Sleep>0</Sleep>
     
   </Sequence>
   
