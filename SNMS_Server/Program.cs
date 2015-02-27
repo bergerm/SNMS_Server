@@ -21,16 +21,19 @@ namespace SNMS_Server
             PluginParser parser = new PluginParser();
             Plugin plugin = parser.ParsePlugin("..\\..\\FacebookPlugin.xml", ref sErrorString);
 
-            Sequence setup = plugin.GetSequence("setup");
             Sequence login = plugin.GetSequence("login");
-            Sequence mainPage = plugin.GetSequence("main page");
 
             plugin.SetVariable("userName", "marmaulucas@gmail.com");
             plugin.SetVariable("password", "chabon1975");
 
-            setup.Run(ref sErrorString);
             login.Run(ref sErrorString);
-            mainPage.Run(ref sErrorString);
+
+
+            plugin.SetVariable("checkWall_tempWallItemMinutesAgoMax", "30");
+            Sequence checkWall = plugin.GetSequence("checkWall");
+
+            checkWall.Run(ref sErrorString);
+
 
             System.Console.WriteLine("All sequences are finished!");
 

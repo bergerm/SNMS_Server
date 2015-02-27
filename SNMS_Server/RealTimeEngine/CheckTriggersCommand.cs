@@ -13,11 +13,13 @@ namespace SNMS_Server.RealTimeEngine
     class CheckTriggersCommand : GeneralCommand
     {
         string m_sTriggersType;
+        string m_sReaction;
 
-        public CheckTriggersCommand(string sTriggersType)
-            : base("Call")
+        public CheckTriggersCommand(string sTriggersType, string sReaction)
+            : base("CheckTriggers")
         {
             m_sTriggersType = sTriggersType;
+            m_sReaction = sReaction;
         }
 
         override protected bool CommandLogic()

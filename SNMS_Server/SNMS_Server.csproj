@@ -79,10 +79,13 @@
     <Compile Include="RealTimeEngine\CallSequenceCommand.cs" />
     <Compile Include="RealTimeEngine\CatenateStringCommand.cs" />
     <Compile Include="RealTimeEngine\Command.cs" />
-    <Compile Include="RealTimeEngine\CheckTriggerCommand.cs" />
     <Compile Include="RealTimeEngine\CompareVariableCommand.cs" />
     <Compile Include="RealTimeEngine\CallCommand.cs" />
     <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
+    <Compile Include="RealTimeEngine\VariableContainsCommand.cs" />
+    <Compile Include="RealTimeEngine\GetElementByTagNameWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\GetElementByClassNameWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\GetElementByCssSelectorWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GreaterThanCommand.cs" />
     <Compile Include="RealTimeEngine\GetInnerIntegerFromElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GetInnerTextFromElementWebDriverCommand.cs" />
@@ -115,6 +118,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="backup_FacebookPlugin.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="FacebookPlugin.xml">
       <SubType>Designer</SubType>
     </Content>

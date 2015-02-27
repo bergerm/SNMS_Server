@@ -89,6 +89,36 @@ namespace SNMS_Server.Connectivity
             }
         }
 
+        public WebDriverElement GetElementByCssSelector(WebDriverElement parentElement, string cssSelector)
+        {
+            return GetElement(parentElement, By.CssSelector(cssSelector));
+        }
+
+        public WebDriverElement GetElementByCssSelector(string cssSelector)
+        {
+            return GetElement(null, By.CssSelector(cssSelector));
+        }
+
+        public WebDriverElement GetElementByClassName(WebDriverElement parentElement, string className)
+        {
+            return GetElement(parentElement, By.ClassName(className));
+        }
+
+        public WebDriverElement GetElementByClassName(string className)
+        {
+            return GetElement(null, By.ClassName(className));
+        }
+
+        public WebDriverElement GetElementByTagName(WebDriverElement parentElement, string tagName)
+        {
+            return GetElement(parentElement, By.TagName(tagName));
+        }
+
+        public WebDriverElement GetElementByTagName(string tagName)
+        {
+            return GetElement(null, By.TagName(tagName));
+        }
+
         public WebDriverElement GetElementByXpath(WebDriverElement parentElement, string xPath)
         {
             return GetElement(parentElement, By.XPath(xPath));

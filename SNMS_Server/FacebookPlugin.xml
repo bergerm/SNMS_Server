@@ -66,23 +66,18 @@
 
   <!-- Login to Facebook -->
   <Sequence name="login">
-    <!-- Since GoTo is not a conditional command, it will always succeed. -->
-    <Condition>
-      <True>GET USERNAME</True>
-      <False>SKIP USERNAME</False>
-    </Condition>
+    <Call>setup</Call>
+    
     <GoTo>
       <Constant>baseURL</Constant>
     </GoTo>
 
-    <Label>GET USERNAME</Label>
     <GetItem name="userNameField">
       <ParentElement></ParentElement>
       <SearchType>ID</SearchType>
       <SearchValue>email</SearchValue>
     </GetItem>
 
-    <Label>SKIP USERNAME</Label>
     <GetItem name="passwordField">
       <ParentElement></ParentElement>
       <SearchType>ID</SearchType>
@@ -102,7 +97,8 @@
         <Variable>password</Variable>
       </String>
     </Type>
-      
+
+    <Call>main page</Call>
   </Sequence>
 
   <!-- Go to main page -->
@@ -120,6 +116,18 @@
 
   <!-- Check messages on wall -->
   <Sequence name="checkWall">
+    <GetItem name="checkWall_wallIcon">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//li/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>checkWall_wallIcon</Destination>
+    </Click>
+
+    <Sleep>1000</Sleep>
+    
     <!-- Counter Set to 0 -->
     <SetVariable>
       <Destination>checkWall_tempWallItemCounter</Destination>
@@ -158,27 +166,42 @@
         <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
       </SearchValue>
     </GetItem>
-    
-    <GetInnerTextFromItem>
+
+    <GetTextFromWebItem>
       <Source>checkWall_minutesAgoText</Source>
       <Destination>checkWall_postMinuesAgo</Destination>
-    </GetInnerTextFromItem>
+    </GetTextFromWebItem>
 
+    <!-- If time string is "Just Now" item should be checked -->
     <Condition>
       <True>JUST NOW</True>
-      <False>X MINUTES</False>
+      <False>MINUTES OR HOURS</False>
     </Condition>
     <CompareVariables>
-      <Source1>checkWall_postMinuesAgo</Source1>
-      <Source2>checkWall_tempWallItemMinutesAgoNOW</Source2>
+      <Variable1>checkWall_postMinuesAgo</Variable1>
+      <Variable2>checkWall_tempWallItemMinutesAgoNOW</Variable2>
     </CompareVariables>
 
+    <!-- Set minutes ago to 0 and jump to trigger checking -->
     <Label>JUST NOW</Label>
     <SetVariable>
       <Destination>checkWall_postMinuesAgo</Destination>
       <String>0</String>
     </SetVariable>
 
+    <Jump>X MINUTES</Jump>
+
+    <!-- Check if the item was posted minutes ago or hours, days, etc... -->
+    <Condition>
+      <True>X MINUTES</True>
+      <False>FINISHED</False>
+    </Condition>
+    <VariableContains>
+      <VariableName>checkWall_postMinuesAgo</VariableName>
+      <Source>min</Source>
+    </VariableContains>
+
+    <!-- Check if was posted within the last X minutes (configurable by checkWall_tempWallItemMinutesAgoMax) -->
     <Label>X MINUTES</Label>
     <Condition>
       <True>FINISHED</True>
@@ -192,30 +215,44 @@
         <Variable>checkWall_tempWallItemMinutesAgoMax</Variable>
       </Source2>
     </GreaterThan>
-    
+
+    <!-- Read the message -->
+    <Label>CONTINUE</Label>
     <GetItem name="checkWall_itemText">
       <ParentElement></ParentElement>
       <SearchType>XPath</SearchType>
-      <SearchValue>
-        <Variable>../../../../../../../../../..//p</Variable>
-      </SearchValue>
+      <SearchValue>../../../../../../../../../..//p</SearchValue>
     </GetItem>
 
-    <GetInnerTextFromItem>
+    <GetTextFromWebItem>
       <Source>checkWall_postText</Source>
       <Destination>checkWall_itemText</Destination>
-    </GetInnerTextFromItem>
+    </GetTextFromWebItem>
 
+    <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
     <CheckTriggers>
       <TriggerType>wallPost</TriggerType>
       <Reaction>ReactToWallPost</Reaction>
     </CheckTriggers>
 
+    <!-- Prepare for next post and Jump to WALL ITEM LOOP -->
+    <IncreaseVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <Quantity>1</Quantity>
+    </IncreaseVariable>
+    
     <Jump>WALL ITEM LOOP</Jump>
 
+    <!-- finished sequence -->
     <Label>FINISHED</Label>
     <Sleep>0</Sleep>
-    
+
+  </Sequence>
+
+  <!-- Check private messages -->
+  <Sequence name="checkPrivateMessages">
+
+
   </Sequence>
   
 </Plugin>

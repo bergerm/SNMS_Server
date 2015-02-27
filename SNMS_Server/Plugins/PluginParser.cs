@@ -101,9 +101,16 @@ namespace SNMS_Server.Plugins
                     string sGetItemSearchValue = "";
                     bool bGetItemSearchValueVariable = false;
 
-                    if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    XmlNode getItemSearchValueNode = commandNode.SelectSingleNode("SearchValue");
+                    if (getItemSearchValueNode == null)
                     {
-                        sGetItemSearchValue = commandNode.ChildNodes[0].InnerText;
+                        errorString = "Invalid Get Item Search Value";
+                        return false;
+                    }
+
+                    if (getItemSearchValueNode.HasChildNodes && getItemSearchValueNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sGetItemSearchValue = getItemSearchValueNode.ChildNodes[0].InnerText.ToLower();
                         bGetItemSearchValueVariable = true;
                         if (plugin.GetVariable(sGetItemSearchValue) == null)
                         {
@@ -113,7 +120,7 @@ namespace SNMS_Server.Plugins
                     }
                     else
                     {
-                        sGetItemSearchValue = commandNode.InnerText;
+                        sGetItemSearchValue = getItemSearchValueNode.InnerText;
                         bIsCommandSource2Variable = false;
                     }
 
@@ -145,6 +152,30 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
                         sequence.AddCommand(getItemByXPath);
+                    }
+                    else if (sGetItemSearchType == "class")
+                    {
+                        GetElementByClassNameWebDriverCommand getItemByClass = new GetElementByClassNameWebDriverCommand(sGetItemParentElement,
+                                                                                                            sGetItemName,
+                                                                                                            sGetItemSearchValue,
+                                                                                                            bGetItemSearchValueVariable);
+                        sequence.AddCommand(getItemByClass);
+                    }
+                    else if (sGetItemSearchType == "class")
+                    {
+                        GetElementByCssSelectorWebDriverCommand getItemByCss = new GetElementByCssSelectorWebDriverCommand(sGetItemParentElement,
+                                                                                                            sGetItemName,
+                                                                                                            sGetItemSearchValue,
+                                                                                                            bGetItemSearchValueVariable);
+                        sequence.AddCommand(getItemByCss);
+                    }
+                    else if (sGetItemSearchType == "tag")
+                    {
+                        GetElementByTagNameWebDriverCommand getItemByTag = new GetElementByTagNameWebDriverCommand(sGetItemParentElement,
+                                                                                                            sGetItemName,
+                                                                                                            sGetItemSearchValue,
+                                                                                                            bGetItemSearchValueVariable);
+                        sequence.AddCommand(getItemByTag);
                     }
                     break;
 
@@ -211,31 +242,127 @@ namespace SNMS_Server.Plugins
                     break;
 
                 case "SetVariable":
-                    string sSetVariableName = commandNode.SelectSingleNode("Destination").InnerText;
+                    string sSetVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
                     string sSetVariableValue = commandNode.SelectSingleNode("String").InnerText;
                     SetVariableCommand setVariableCommand = new SetVariableCommand(sSetVariableName, sSetVariableValue);
                     sequence.AddCommand(setVariableCommand);
                     break;
 
-                case "CompareVariable":
-                    string sCompareVariable1Name = commandNode.SelectSingleNode("Source1").InnerText;
-                    string sCompareVariable2Name = commandNode.SelectSingleNode("Source2").InnerText;
+                case "CompareVariables":
+                    string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText;
+                    string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText;
                     CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
                     sequence.AddCommand(compareVariableCommand, isConditionalNode);
                     break;
 
                 case "IncreaseVariable":
                     string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
-                    int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("String").InnerText);
+                    int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
                     IncreaseVariableCommand increaseVariableCommand = new IncreaseVariableCommand(sIncreaseVariableName, dwIncreaseVariableValue);
                     sequence.AddCommand(increaseVariableCommand);
                     break;
 
                 case "DecreaseVariable":
                     string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
-                    int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("String").InnerText);
+                    int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
                     DecreaseVariableCommand decreaseVariableCommand = new DecreaseVariableCommand(sDecreaseVariableName, dwDecreaseVariableValue);
                     sequence.AddCommand(decreaseVariableCommand);
+                    break;
+
+                case "Call":
+                    string callSequenceName = commandNode.InnerText;
+                    CallCommand callCommand = new CallCommand(callSequenceName);
+                    sequence.AddCommand(callCommand);
+                    break;
+
+                case "GetTextFromWebItem":
+                    string sGetTextSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                    string sGetTextDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    GetInnerTextFromElementWebDriverCommand getTextFromElementCommand = new GetInnerTextFromElementWebDriverCommand(sGetTextSource, sGetTextDest);
+                    sequence.AddCommand(getTextFromElementCommand);
+                    break;
+
+                case "GetIntegerFromWebItem":
+                    string sGetIntSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                    string sGetIntDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    GetInnerIntegerFromElementWebDriverCommand getIntFromElementCommand = new GetInnerIntegerFromElementWebDriverCommand(sGetIntSource, sGetIntDest);
+                    sequence.AddCommand(getIntFromElementCommand);
+                    break;
+
+                case "GreaterThan":
+                    XmlNode greaterThanSource1Node = commandNode.SelectSingleNode("Source1");
+                    string sGreaterThanSource1 = "";
+                    bool bGreaterThanSource1Variable = false;
+                    if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sGreaterThanSource1 = greaterThanSource1Node.InnerText.ToLower();
+                        bGreaterThanSource1Variable = true;
+                        if (plugin.GetVariable(sGreaterThanSource1) == null)
+                        {
+                            errorString = "Invalid Greater Than Command Variable";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sGreaterThanSource1 = greaterThanSource1Node.InnerText;
+                        bGreaterThanSource1Variable = false;
+                    }
+
+                    XmlNode greaterThanSource2Node = commandNode.SelectSingleNode("Source2");
+                    string sGreaterThanSource2 = "";
+                    bool bGreaterThanSource2Variable = false;
+                    if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sGreaterThanSource2 = greaterThanSource2Node.InnerText.ToLower();
+                        bGreaterThanSource2Variable = true;
+                        if (plugin.GetVariable(sGreaterThanSource2) == null)
+                        {
+                            errorString = "Invalid Greater Than Command Variable";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sGreaterThanSource2 = greaterThanSource2Node.InnerText;
+                        bGreaterThanSource2Variable = false;
+                    }
+
+                    GreaterThanCommand greaterThanCommand = new GreaterThanCommand(sGreaterThanSource1, bGreaterThanSource1Variable, sGreaterThanSource2, bGreaterThanSource2Variable);
+                    sequence.AddCommand(greaterThanCommand);
+                    break;
+
+                case "VariableContains":
+                    string sVariableContainsName = commandNode.SelectSingleNode("VariableName").InnerText;
+                    XmlNode variableContainsSourceNode = commandNode.SelectSingleNode("Source");
+                    string sVariableContainsSource = "";
+                    bool bVariableContainsSourceVariable = false;
+                    if (variableContainsSourceNode.HasChildNodes && variableContainsSourceNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sVariableContainsSource = variableContainsSourceNode.InnerText.ToLower();
+                        bVariableContainsSourceVariable = true;
+                        if (plugin.GetVariable(sVariableContainsSource) == null)
+                        {
+                            errorString = "Invalid Greater Than Command Variable";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sVariableContainsSource = variableContainsSourceNode.InnerText;
+                        bVariableContainsSourceVariable = false;
+                    }
+                    VariableContainsCommand variableContainsCommand = new VariableContainsCommand(sVariableContainsName,
+                                                                                                    sVariableContainsSource,
+                                                                                                    bVariableContainsSourceVariable);
+                    sequence.AddCommand(variableContainsCommand);
+                    break;
+
+                case "CheckTriggers":
+                    string sTriggersType = commandNode.SelectSingleNode("TriggerType").InnerText;
+                    string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
+                    CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sReaction);
+                    sequence.AddCommand(checkTriggerCommand);
                     break;
 
                 default:
@@ -397,6 +524,12 @@ namespace SNMS_Server.Plugins
                                 trueConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("True").InnerText);
                                 falseConditionDetinationLabelDictionary.Add(dwCurrentNodeIndex, commandNode.SelectSingleNode("False").InnerText);
                                 bIsCurrentNodeConditional = true;
+                                break;
+
+                            case "jump":
+                                trueConditionDetinationLabelDictionary.Add(Math.Max(dwCurrentNodeIndex-1,0), commandNode.InnerText);
+                                falseConditionDetinationLabelDictionary.Add(Math.Max(dwCurrentNodeIndex-1,0), commandNode.InnerText);
+                                bIsCurrentNodeConditional = false;
                                 break;
 
                             default:
