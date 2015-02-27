@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using SNMS_Server.Variables;
 using SNMS_Server.RealTimeEngine;
 using SNMS_Server.Connectivity;
+using SNMS_Server.Plugins;
 
 namespace SNMS_Server.RealTimeEngine.Sequences
 {
     class Sequence
     {
         string m_sSequenceName;
+        Plugin m_plugin;
         VariableDictionary m_variableDictionary;
         WebElementsDictionary m_webDriverElementDictionary;
         WebDriver m_webDriver;
@@ -33,6 +35,7 @@ namespace SNMS_Server.RealTimeEngine.Sequences
         void Add(Command command, bool isConditional = false)
         {
             int index = m_sequenceNodesList.Count;
+            command.SetSequence(this);
             m_sequenceNodesList.Add(new SequenceNode(index, command, isConditional));
         }
 
@@ -80,6 +83,16 @@ namespace SNMS_Server.RealTimeEngine.Sequences
                     ((WebDriverCommand)cmd).SetWebElementsDictionary(newDict);
                 }
             }
+        }
+
+        public void SetPlugin(Plugin plugin)
+        {
+            m_plugin = plugin;
+        }
+
+        public Plugin GetPlugin()
+        {
+            return m_plugin;
         }
 
         public void Run(ref string sErrorString)

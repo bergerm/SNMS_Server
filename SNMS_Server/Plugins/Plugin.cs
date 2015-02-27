@@ -100,6 +100,7 @@ namespace SNMS_Server.Plugins
         public void AddSequence(string sName, Sequence sequence)
         {
             m_sequenceDictionary.SetSequence(sName, sequence);
+            sequence.SetPlugin(this);
         }
 
         public Sequence GetSequence(string sSequenceName)

@@ -13,7 +13,12 @@
   <Variable name="SystemResultString">
     <VariableType>string</VariableType>
   </Variable>
-
+  
+  <!-- SystemReactionSequence is the variable used to select the required reaction for the validated trigger -->
+  <Variable name="SystemReactionSequence">
+    <VariableType>string</VariableType>
+  </Variable>
+  
   <!-- Constants for entire system -->
   <Constant name="baseURL">
     <ConstantType>string</ConstantType>

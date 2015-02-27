@@ -81,6 +81,8 @@
     <Compile Include="RealTimeEngine\Command.cs" />
     <Compile Include="RealTimeEngine\CheckTriggerCommand.cs" />
     <Compile Include="RealTimeEngine\CompareVariableCommand.cs" />
+    <Compile Include="RealTimeEngine\CallCommand.cs" />
+    <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
     <Compile Include="RealTimeEngine\DecreaseVariableCommand.cs" />
     <Compile Include="RealTimeEngine\GeneralCommands.cs" />
     <Compile Include="RealTimeEngine\IncreaseVariableCommand.cs" />

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using SNMS_Server.Variables;
+using SNMS_Server.Plugins;
+using SNMS_Server.RealTimeEngine.Sequences;
 
 namespace SNMS_Server.RealTimeEngine
 {
@@ -12,6 +14,7 @@ namespace SNMS_Server.RealTimeEngine
     {
         string m_sCommandType;
         string m_sCommandSubType;
+        protected Sequence m_sequence;
 
         protected VariableDictionary m_variableDictionary;
 
@@ -25,6 +28,21 @@ namespace SNMS_Server.RealTimeEngine
         public void SetVariableDictionary(VariableDictionary dict)
         {
             m_variableDictionary = dict;
+        }
+
+        public void SetSequence(Sequence sequence)
+        {
+            m_sequence = sequence;
+        }
+
+        public Sequence GetSequence()
+        {
+            return m_sequence;
+        }
+
+        public Plugin GetPlugin(Plugin plugin)
+        {
+           return m_sequence.GetPlugin();
         }
 
         abstract protected bool CommandLogic();
