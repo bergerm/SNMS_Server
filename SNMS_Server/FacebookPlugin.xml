@@ -174,8 +174,10 @@
     </CompareVariables>
 
     <Label>JUST NOW</Label>
-    <Destination>checkWall_postMinuesAgo</Destination>
-    <String>0</String>
+    <SetVariable>
+      <Destination>checkWall_postMinuesAgo</Destination>
+      <String>0</String>
+    </SetVariable>
 
     <Label>X MINUTES</Label>
     <Condition>
