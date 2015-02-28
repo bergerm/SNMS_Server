@@ -131,7 +131,7 @@ namespace SNMS_Server.Plugins
                         return false;
                     }
 
-                    if (sGetItemParentElement != "" && plugin.GetWebElement(sGetItemParentElement) == null)
+                    if (sGetItemParentElement != "" && plugin.WebElementExists(sGetItemParentElement) == false)
                     {
                         errorString = "Invalid Get Item parent element";
                         return false;
@@ -177,6 +177,7 @@ namespace SNMS_Server.Plugins
                                                                                                             bGetItemSearchValueVariable);
                         sequence.AddCommand(getItemByTag);
                     }
+                    plugin.SetWebElement(sGetItemName, null);
                     break;
 
                 case "GoBack":
@@ -243,6 +244,11 @@ namespace SNMS_Server.Plugins
 
                 case "SetVariable":
                     string sSetVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sSetVariableName) == null)
+                    {
+                        errorString = "Invalid SetVariable Destination";
+                        return false;
+                    }
                     string sSetVariableValue = commandNode.SelectSingleNode("String").InnerText;
                     SetVariableCommand setVariableCommand = new SetVariableCommand(sSetVariableName, sSetVariableValue);
                     sequence.AddCommand(setVariableCommand);
@@ -250,20 +256,40 @@ namespace SNMS_Server.Plugins
 
                 case "CompareVariables":
                     string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText.ToLower();
+                    if (plugin.GetVariable(sCompareVariable1Name) == null)
+                    {
+                        errorString = "Invalid CompareVariables Source1";
+                        return false;
+                    }
                     string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText.ToLower();
+                    if (plugin.GetVariable(sCompareVariable2Name) == null)
+                    {
+                        errorString = "Invalid CompareVariables Source2";
+                        return false;
+                    }
                     CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
                     sequence.AddCommand(compareVariableCommand, isConditionalNode);
                     break;
 
                 case "IncreaseVariable":
-                    string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
+                    string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sIncreaseVariableName) == null)
+                    {
+                        errorString = "Invalid IncreaseVariable Destination";
+                        return false;
+                    }
                     int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
                     IncreaseVariableCommand increaseVariableCommand = new IncreaseVariableCommand(sIncreaseVariableName, dwIncreaseVariableValue);
                     sequence.AddCommand(increaseVariableCommand);
                     break;
 
                 case "DecreaseVariable":
-                    string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText;
+                    string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sDecreaseVariableName) == null)
+                    {
+                        errorString = "Invalid DecreaseVariable Destination";
+                        return false;
+                    }
                     int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
                     DecreaseVariableCommand decreaseVariableCommand = new DecreaseVariableCommand(sDecreaseVariableName, dwDecreaseVariableValue);
                     sequence.AddCommand(decreaseVariableCommand);
@@ -277,14 +303,34 @@ namespace SNMS_Server.Plugins
 
                 case "GetTextFromWebItem":
                     string sGetTextSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                    if (plugin.WebElementExists(sGetTextSource) == false)
+                    {
+                        errorString = "Invalid GetTextFromWebItem element";
+                        return false;
+                    }
                     string sGetTextDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sGetTextDest) == null)
+                    {
+                        errorString = "Invalid GetTextFromWebItem Destination";
+                        return false;
+                    }
                     GetInnerTextFromElementWebDriverCommand getTextFromElementCommand = new GetInnerTextFromElementWebDriverCommand(sGetTextSource, sGetTextDest);
                     sequence.AddCommand(getTextFromElementCommand);
                     break;
 
                 case "GetIntegerFromWebItem":
                     string sGetIntSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                    if (plugin.WebElementExists(sGetIntSource) == false)
+                    {
+                        errorString = "Invalid GetIntegerFromWebItem element";
+                        return false;
+                    }
                     string sGetIntDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sGetIntSource) == null)
+                    {
+                        errorString = "Invalid GetIntegerFromWebItem Destination";
+                        return false;
+                    }
                     GetInnerIntegerFromElementWebDriverCommand getIntFromElementCommand = new GetInnerIntegerFromElementWebDriverCommand(sGetIntSource, sGetIntDest);
                     sequence.AddCommand(getIntFromElementCommand);
                     break;
@@ -329,7 +375,7 @@ namespace SNMS_Server.Plugins
                     }
 
                     GreaterThanCommand greaterThanCommand = new GreaterThanCommand(sGreaterThanSource1, bGreaterThanSource1Variable, sGreaterThanSource2, bGreaterThanSource2Variable);
-                    sequence.AddCommand(greaterThanCommand);
+                    sequence.AddCommand(greaterThanCommand, isConditionalNode);
                     break;
 
                 case "VariableContains":
@@ -355,14 +401,14 @@ namespace SNMS_Server.Plugins
                     VariableContainsCommand variableContainsCommand = new VariableContainsCommand(sVariableContainsName,
                                                                                                     sVariableContainsSource,
                                                                                                     bVariableContainsSourceVariable);
-                    sequence.AddCommand(variableContainsCommand);
+                    sequence.AddCommand(variableContainsCommand, isConditionalNode);
                     break;
 
                 case "CheckTriggers":
                     string sTriggersType = commandNode.SelectSingleNode("TriggerType").InnerText;
                     string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
                     CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sReaction);
-                    sequence.AddCommand(checkTriggerCommand);
+                    sequence.AddCommand(checkTriggerCommand, isConditionalNode);
                     break;
 
                 default:
@@ -533,7 +579,12 @@ namespace SNMS_Server.Plugins
                                 break;
 
                             default:
-                                HandleCommand(plugin, sequence, sequenceName, commandNode, bIsCurrentNodeConditional, ref errorString);
+                                if (!HandleCommand(plugin, sequence, sequenceName, commandNode, bIsCurrentNodeConditional, ref errorString))
+                                {
+                                    errorString += "; Error in plugin " + plugin.GetPluginName() + ", sequence " + sequenceName + ", index " + dwCurrentNodeIndex + " (" +
+                                        sCommandName + ")";
+                                    return null;
+                                }
                                 dwCurrentNodeIndex++;
                                 bIsCurrentNodeConditional = false;
                                 break;

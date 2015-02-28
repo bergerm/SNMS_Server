@@ -55,6 +55,10 @@
     <VariableType>string</VariableType>
   </Variable>
 
+  <Variable name="checkWall_postText">
+    <VariableType>string</VariableType>
+  </Variable>
+
   <!-- Set up sequence is always run on plugin start and can be called later -->
   <Sequence name="setup">
     <CatenateString>
@@ -220,14 +224,14 @@
     <!-- Read the message -->
     <Label>CONTINUE</Label>
     <GetItem name="checkWall_itemText">
-      <ParentElement></ParentElement>
+      <ParentElement>checkWall_minutesAgoText</ParentElement>
       <SearchType>XPath</SearchType>
       <SearchValue>../../../../../../../../../..//p</SearchValue>
     </GetItem>
 
     <GetTextFromWebItem>
-      <Source>checkWall_postText</Source>
-      <Destination>checkWall_itemText</Destination>
+      <Source>checkWall_itemText</Source>
+      <Destination>checkWall_postText</Destination>
     </GetTextFromWebItem>
 
     <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->

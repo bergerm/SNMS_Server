@@ -92,9 +92,19 @@ namespace SNMS_Server.Plugins
             return m_webElementDictionary;
         }
 
+        public void SetWebElement(string sElementName, WebDriver.WebDriverElement element)
+        {
+            m_webElementDictionary.SetElement(sElementName, element);
+        }
+
         public WebDriver.WebDriverElement GetWebElement(string sElementName)
         {
             return m_webElementDictionary.GetElement(sElementName);
+        }
+
+        public bool WebElementExists(string sElementName)
+        {
+            return m_webElementDictionary.ElementExists(sElementName);
         }
 
         public void AddSequence(string sName, Sequence sequence)

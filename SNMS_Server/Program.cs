@@ -36,7 +36,7 @@ namespace SNMS_Server
             login.Run(ref sErrorString);
 
 
-            plugin.SetVariable("checkWall_tempWallItemMinutesAgoMax", "30");
+            plugin.SetVariable("checkWall_tempWallItemMinutesAgoMax", "59");
             Sequence checkWall = plugin.GetSequence("checkWall");
 
             checkWall.Run(ref sErrorString);

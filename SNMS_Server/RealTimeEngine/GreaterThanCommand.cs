@@ -30,7 +30,7 @@ namespace SNMS_Server.RealTimeEngine
         protected override bool CommandLogic()
         {
             int num1, num2;
-            string sTempString
+            string sTempString;
 
             if (m_bIsSource1Variable) 
             {
@@ -41,13 +41,17 @@ namespace SNMS_Server.RealTimeEngine
                 }
 
                 sTempString = tempVar.GetString();
-                sTempString = digitsOnly.Replace(sTempString, "");    
+                sTempString = digitsOnly.Replace(sTempString, "");  
             }
             else
             {
                 sTempString = digitsOnly.Replace(m_sSource1, "");
             }
 
+            if (sTempString == "")
+            {
+                sTempString = "0";
+            }
             num1 = Int32.Parse(sTempString);
 
             if (m_bIsSource2Variable)
@@ -66,6 +70,10 @@ namespace SNMS_Server.RealTimeEngine
                 sTempString = digitsOnly.Replace(m_sSource2, "");
             }
 
+            if (sTempString == "")
+            {
+                sTempString = "0";
+            }
             num2 = Int32.Parse(sTempString);
 
             string sResult;
@@ -80,6 +88,7 @@ namespace SNMS_Server.RealTimeEngine
 
             m_variableDictionary.SetVariable("systemResultString", new StringVariable(sResult));
             return true;
-        }
+        }
+
     }
 }
