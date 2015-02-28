@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SNMS_Server.Connectivity;
 
+using SNMS_Server.Variables;
+
 namespace SNMS_Server.RealTimeEngine
 {
     class GetElementByClassNameWebDriverCommand : WebDriverCommand
@@ -29,26 +31,36 @@ namespace SNMS_Server.RealTimeEngine
         {
             WebDriver.WebDriverElement tempElement = null;
 
-            string sElementId = "";
-            if (m_bIdIsVariable)
+            try
             {
-                sElementId = m_variableDictionary.GetVariable(m_sId).GetString();
+                string sElementId = "";
+                if (m_bIdIsVariable)
+                {
+                    sElementId = m_variableDictionary.GetVariable(m_sId).GetString();
+                }
+                else
+                {
+                    sElementId = m_sId;
+                }
+
+                if ("" != m_parentElementName)
+                {
+                    tempElement = m_webDriver.GetElementByClassName(m_webElementsDictionary.GetElement(m_parentElementName), sElementId);
+                }
+                else
+                {
+                    tempElement = m_webDriver.GetElementByClassName(null, sElementId);
+                }
+
+                m_webElementsDictionary.SetElement(m_destinationElementName, tempElement);
+                m_variableDictionary.SetVariable("systemResultString", new StringVariable("true"));
             }
-            else
+            catch(Exception e)
             {
-                sElementId = m_sId;
+                m_webElementsDictionary.SetElement(m_destinationElementName, null);
+                m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
             }
 
-            if ("" != m_parentElementName)
-            {
-                tempElement = m_webDriver.GetElementByClassName(m_webElementsDictionary.GetElement(m_parentElementName), sElementId);
-            }
-            else
-            {
-                tempElement = m_webDriver.GetElementByClassName(null, sElementId);
-            }
-
-            m_webElementsDictionary.SetElement(m_destinationElementName,tempElement);
             return true;
         }
     }

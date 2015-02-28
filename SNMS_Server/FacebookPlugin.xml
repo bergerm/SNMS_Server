@@ -171,6 +171,11 @@
       <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
     </CatenateString>
 
+    <!-- if no item found, finish sequence -->
+    <Condition>
+      <True>ITEM FOUND</True>
+      <False>FINISHED</False>
+    </Condition>
     <GetItem name="checkWall_minutesAgoText">
       <ParentElement></ParentElement>
       <SearchType>XPath</SearchType>
@@ -179,6 +184,9 @@
       </SearchValue>
     </GetItem>
 
+    <!-- item was found, continue sequence -->
+    <Label>ITEM FOUND</Label>
+    
     <GetTextFromWebItem>
       <Source>checkWall_minutesAgoText</Source>
       <Destination>checkWall_postMinuesAgo</Destination>

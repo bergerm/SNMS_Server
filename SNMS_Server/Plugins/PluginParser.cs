@@ -143,7 +143,7 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemName,
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByID);
+                        sequence.AddCommand(getItemByID, isConditionalNode);
                     }
                     else if (sGetItemSearchType == "xpath")
                     {
@@ -151,7 +151,7 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemName,
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByXPath);
+                        sequence.AddCommand(getItemByXPath, isConditionalNode);
                     }
                     else if (sGetItemSearchType == "class")
                     {
@@ -159,7 +159,7 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemName,
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByClass);
+                        sequence.AddCommand(getItemByClass, isConditionalNode);
                     }
                     else if (sGetItemSearchType == "class")
                     {
@@ -167,7 +167,7 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemName,
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByCss);
+                        sequence.AddCommand(getItemByCss, isConditionalNode);
                     }
                     else if (sGetItemSearchType == "tag")
                     {
@@ -175,7 +175,7 @@ namespace SNMS_Server.Plugins
                                                                                                             sGetItemName,
                                                                                                             sGetItemSearchValue,
                                                                                                             bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByTag);
+                        sequence.AddCommand(getItemByTag, isConditionalNode);
                     }
                     plugin.SetWebElement(sGetItemName, null);
                     break;
