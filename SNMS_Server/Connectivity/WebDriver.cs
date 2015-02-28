@@ -138,5 +138,10 @@ namespace SNMS_Server.Connectivity
         {
             return GetElement(null, By.Id(id));
         }
+
+        public WebDriverElement GetActiveElement()
+        {
+            return new WebDriverElement(m_webDriver.SwitchTo().ActiveElement());
+        }
     }
 }

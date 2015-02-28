@@ -82,6 +82,7 @@
     <Compile Include="RealTimeEngine\CompareVariableCommand.cs" />
     <Compile Include="RealTimeEngine\CallCommand.cs" />
     <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
+    <Compile Include="RealTimeEngine\GetActiveElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\VariableContainsCommand.cs" />
     <Compile Include="RealTimeEngine\GetElementByTagNameWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GetElementByClassNameWebDriverCommand.cs" />

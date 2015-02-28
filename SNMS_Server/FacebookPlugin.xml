@@ -59,6 +59,14 @@
     <VariableType>string</VariableType>
   </Variable>
 
+  <Variable name="respondToPost_commentButtonXPath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_responseString">
+    <VariableType>string</VariableType>
+  </Variable>
+
   <!-- Set up sequence is always run on plugin start and can be called later -->
   <Sequence name="setup">
     <CatenateString>
@@ -237,7 +245,7 @@
     <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
     <CheckTriggers>
       <TriggerType>wallPost</TriggerType>
-      <Reaction>ReactToWallPost</Reaction>
+      <Reaction>reactToWallPost</Reaction>
     </CheckTriggers>
 
     <!-- Prepare for next post and Jump to WALL ITEM LOOP -->
@@ -252,6 +260,62 @@
     <Label>FINISHED</Label>
     <Sleep>0</Sleep>
 
+  </Sequence>
+
+  <!-- React to a wall post -->
+  <Sequence name="reactToWallPost">
+    <SetVariable>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <String>(//input[@value='Comment'])[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>]</Source2>
+    </CatenateString>
+    
+    <GetItem name="reactToWallPost_commentButton">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>reactToWallPost_commentButton</Destination>
+    </Click>
+
+    <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
+
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
+
+    <Type>
+      <Destination>reactToWallPost_commentTextArea</Destination>
+      <String>
+        <Variable>respondToPost_responseString</Variable>
+      </String>
+    </Type>
+    
   </Sequence>
 
   <!-- Check private messages -->

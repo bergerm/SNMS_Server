@@ -7,6 +7,7 @@ using System.Threading;
 
 using SNMS_Server.Plugins;
 using SNMS_Server.RealTimeEngine.Sequences;
+using SNMS_Server.Variables;
 
 namespace SNMS_Server.RealTimeEngine
 {
@@ -24,7 +25,18 @@ namespace SNMS_Server.RealTimeEngine
 
         override protected bool CommandLogic()
         {
-            return false;
+            StringVariable responseVariable = new StringVariable("I am responding!");
+            m_variableDictionary.SetVariable("respondToPost_responseString".ToLower(), responseVariable);
+
+            Sequence reactionSequence = m_sequence.GetPlugin().GetSequence("reactToWallPost");
+
+            string sErrorString = "";
+
+            reactionSequence.Run(ref sErrorString);
+
+            System.Console.WriteLine(sErrorString);
+
+            return true;
         }
     }
 }

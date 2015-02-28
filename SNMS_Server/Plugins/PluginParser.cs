@@ -180,6 +180,12 @@ namespace SNMS_Server.Plugins
                     plugin.SetWebElement(sGetItemName, null);
                     break;
 
+                case "GetActiveItem":
+                    string sGetActiveItemDestination = commandNode.Attributes["name"].Value.ToLower();
+                    GetActiveElementWebDriverCommand getActiveElementCommand = new GetActiveElementWebDriverCommand(sGetActiveItemDestination);
+                    sequence.AddCommand(getActiveElementCommand);
+                    break;
+
                 case "GoBack":
                     GoBackWebDriverCommand goBackCommand = new GoBackWebDriverCommand();
                     sequence.AddCommand(goBackCommand);
