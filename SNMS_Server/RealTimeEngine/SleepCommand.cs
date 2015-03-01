@@ -21,5 +21,10 @@ namespace SNMS_Server.RealTimeEngine
             Thread.Sleep(m_dwMilliSecs);
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new SleepCommand(m_dwMilliSecs);
+        }
     }
 }

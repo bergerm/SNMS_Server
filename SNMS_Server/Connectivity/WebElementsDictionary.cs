@@ -39,5 +39,15 @@ namespace SNMS_Server.Connectivity
 
             return m_dictionary[elementName];
         }
+
+        public WebElementsDictionary Clone()
+        {
+            WebElementsDictionary newDict = new WebElementsDictionary();
+            foreach (KeyValuePair<string, WebDriver.WebDriverElement> entry in m_dictionary)
+            {
+                newDict.SetElement(entry.Key, (WebDriver.WebDriverElement)entry.Value.Clone());
+            }
+            return newDict;
+        }
     }
 }

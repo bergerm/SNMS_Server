@@ -70,5 +70,13 @@ namespace SNMS_Server.RealTimeEngine.Sequences
         {
             return m_dwIndex;
         }
+
+        public SequenceNode Clone()
+        {
+            SequenceNode newNode = new SequenceNode(m_dwIndex, m_command.Clone(), m_bIsConditionalNode);
+            newNode.SetNextNode(m_dwNextNode, true);
+            newNode.SetNextNode(m_dwNextNodeIfConditionFailed, false);
+            return newNode;
+        }
     }
 }

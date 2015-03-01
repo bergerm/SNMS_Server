@@ -61,5 +61,7 @@ namespace SNMS_Server.RealTimeEngine
         {
             return m_sCommandSubType;
         }
+
+        public virtual Command Clone();
     }
 }

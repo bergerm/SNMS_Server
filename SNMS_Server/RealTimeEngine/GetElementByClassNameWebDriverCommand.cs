@@ -11,8 +11,8 @@ namespace SNMS_Server.RealTimeEngine
 {
     class GetElementByClassNameWebDriverCommand : WebDriverCommand
     {
-        string m_parentElementName;
-        string m_destinationElementName;
+        string m_sParentElementName;
+        string m_sDestinationElementName;
         string m_sId;
         bool m_bIdIsVariable;
 
@@ -21,8 +21,8 @@ namespace SNMS_Server.RealTimeEngine
                                                         String Id,
                                                         bool bIdIsVariable) : base("GetElementByClassName")
         {
-            m_parentElementName = parentElementName;
-            m_destinationElementName = destinationElementName;
+            m_sParentElementName = parentElementName;
+            m_sDestinationElementName = destinationElementName;
             m_sId = Id;
             m_bIdIsVariable = bIdIsVariable;
         }
@@ -43,25 +43,30 @@ namespace SNMS_Server.RealTimeEngine
                     sElementId = m_sId;
                 }
 
-                if ("" != m_parentElementName)
+                if ("" != m_sParentElementName)
                 {
-                    tempElement = m_webDriver.GetElementByClassName(m_webElementsDictionary.GetElement(m_parentElementName), sElementId);
+                    tempElement = m_webDriver.GetElementByClassName(m_webElementsDictionary.GetElement(m_sParentElementName), sElementId);
                 }
                 else
                 {
                     tempElement = m_webDriver.GetElementByClassName(null, sElementId);
                 }
 
-                m_webElementsDictionary.SetElement(m_destinationElementName, tempElement);
+                m_webElementsDictionary.SetElement(m_sDestinationElementName, tempElement);
                 m_variableDictionary.SetVariable("systemResultString", new StringVariable("true"));
             }
             catch(Exception e)
             {
-                m_webElementsDictionary.SetElement(m_destinationElementName, null);
+                m_webElementsDictionary.SetElement(m_sDestinationElementName, null);
                 m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
             }
 
             return true;
+        }
+
+        public virtual Command Clone()
+        {
+            return new GetElementByClassNameWebDriverCommand(m_sParentElementName, m_sDestinationElementName, m_sId, m_bIdIsVariable);
         }
     }
 }

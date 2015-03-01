@@ -10,22 +10,22 @@ namespace SNMS_Server.RealTimeEngine
 {
     class TypeElementWebDriverCommand : WebDriverCommand
     {
-        string m_destinationElementName;
-        string m_string;
+        string m_sDestinationElementName;
+        string m_sString;
         bool m_bStringIsVariable;
 
         public TypeElementWebDriverCommand( string destinationElementName,
                                             string str,
                                             bool isVariable ) : base("TypeElement")
         {
-            m_destinationElementName = destinationElementName;
-            m_string = str;
+            m_sDestinationElementName = destinationElementName;
+            m_sString = str;
             m_bStringIsVariable = isVariable;
         }
 
         override protected bool CommandLogic()
         {
-            if (m_webElementsDictionary.GetElement(m_destinationElementName) == null)
+            if (m_webElementsDictionary.GetElement(m_sDestinationElementName) == null)
             {
                 return false;
             }
@@ -34,17 +34,22 @@ namespace SNMS_Server.RealTimeEngine
 
             if (m_bStringIsVariable)
             {
-                sTempString = (m_variableDictionary.GetVariable(m_string)).GetString();
+                sTempString = (m_variableDictionary.GetVariable(m_sString)).GetString();
             }
             else
             {
-                sTempString = m_string;
+                sTempString = m_sString;
             }
 
             sTempString = sTempString.Replace("\\n", "\n");
 
-            m_webElementsDictionary.GetElement(m_destinationElementName).Type(sTempString);
+            m_webElementsDictionary.GetElement(m_sDestinationElementName).Type(sTempString);
             return true;
+        }
+
+        public virtual Command Clone()
+        {
+            return new TypeElementWebDriverCommand(m_sDestinationElementName, m_sString, m_bStringIsVariable);
         }
     }
 }

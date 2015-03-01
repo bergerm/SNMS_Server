@@ -40,5 +40,10 @@ namespace SNMS_Server.Variables
         {
             m_dwValue = Int32.Parse(sValue);
         }
+
+        public virtual Variable Clone()
+        {
+            return new IntVariable(m_dwValue);
+        }
     }
 }

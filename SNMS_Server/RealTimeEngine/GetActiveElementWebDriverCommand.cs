@@ -9,11 +9,11 @@ namespace SNMS_Server.RealTimeEngine
 {
     class GetActiveElementWebDriverCommand : WebDriverCommand
     {
-        string m_destinationElementName;
+        string m_sDestinationElementName;
 
         public GetActiveElementWebDriverCommand(string destinationElementName) : base("GetActiveElement")
         {
-            m_destinationElementName = destinationElementName;
+            m_sDestinationElementName = destinationElementName;
         }
 
         override protected bool CommandLogic()
@@ -27,8 +27,13 @@ namespace SNMS_Server.RealTimeEngine
                 return false;
             }
 
-            m_webElementsDictionary.SetElement(m_destinationElementName,tempElement);
+            m_webElementsDictionary.SetElement(m_sDestinationElementName,tempElement);
             return true;
+        }
+
+        public virtual Command Clone()
+        {
+            return new GetActiveElementWebDriverCommand(m_sDestinationElementName);
         }
     }
 }

@@ -32,5 +32,10 @@ namespace SNMS_Server.RealTimeEngine
             m_webDriver.GoTo(sDest);
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new GoToWebDriverCommand(m_sDestination, m_bIsVariable);
+        }
     }
 }

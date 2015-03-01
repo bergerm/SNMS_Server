@@ -47,5 +47,10 @@ namespace SNMS_Server.RealTimeEngine
 
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new GetInnerIntegerFromElementWebDriverCommand(m_sSourceElementName, m_sDestinationVariableName);
+        }
     }
 }

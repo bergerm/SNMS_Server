@@ -17,8 +17,8 @@ namespace SNMS_Server.Plugins
         string m_sPluginName;
         string m_sPluginVersion;
 
-        VariableDictionary m_variableDictionary;
-        WebElementsDictionary m_webElementDictionary;
+        VariableDictionary m_startingVariableDictionary;
+        WebElementsDictionary m_startingWebElementDictionary;
         WebDriver m_webDriver;
 
         SequenceDictionary m_sequenceDictionary;
@@ -27,9 +27,11 @@ namespace SNMS_Server.Plugins
 
         public Plugin()
         {
-            m_variableDictionary = new VariableDictionary();
-            m_webElementDictionary = new WebElementsDictionary();
-            m_webDriver = new WebDriver();
+            m_startingVariableDictionary = new VariableDictionary();
+            m_startingWebElementDictionary = new WebElementsDictionary();
+            // m_webDriver = new WebDriver();
+            // plugin by itself SHOULD NOT have a web driver
+            m_webDriver = null;
 
             m_sequenceDictionary = new SequenceDictionary();
         }
@@ -56,30 +58,35 @@ namespace SNMS_Server.Plugins
 
         public void AddVariable(string sVarName, Variable var)
         {
-            m_variableDictionary.SetVariable(sVarName, var);
+            m_startingVariableDictionary.SetVariable(sVarName, var);
         }
 
         public Variable GetVariable(string sVarName)
         {
-           return m_variableDictionary.GetVariable(sVarName);
+           return m_startingVariableDictionary.GetVariable(sVarName);
         }
 
         public bool SetVariable(string sVarName, string sVarValue)
         {
-            Variable tempVar = m_variableDictionary.GetVariable(sVarName.ToLower());
+            Variable tempVar = m_startingVariableDictionary.GetVariable(sVarName.ToLower());
             if(tempVar == null)
             {
                 return false;
             }
 
             tempVar.SetVariable(sVarValue);
-            m_variableDictionary.SetVariable(sVarName, tempVar);
+            m_startingVariableDictionary.SetVariable(sVarName, tempVar);
             return true;
         }
 
         public VariableDictionary GetVariableDictionary()
         {
-            return m_variableDictionary;
+            return m_startingVariableDictionary;
+        }
+
+        public VariableDictionary CloneVariableDictionary()
+        {
+            return m_startingVariableDictionary.Clone();
         }
 
         public WebDriver GetWebDriver()
@@ -89,22 +96,22 @@ namespace SNMS_Server.Plugins
 
         public WebElementsDictionary GetWebElementsDictionary()
         {
-            return m_webElementDictionary;
+            return m_startingWebElementDictionary;
         }
 
         public void SetWebElement(string sElementName, WebDriver.WebDriverElement element)
         {
-            m_webElementDictionary.SetElement(sElementName, element);
+            m_startingWebElementDictionary.SetElement(sElementName, element);
         }
 
         public WebDriver.WebDriverElement GetWebElement(string sElementName)
         {
-            return m_webElementDictionary.GetElement(sElementName);
+            return m_startingWebElementDictionary.GetElement(sElementName);
         }
 
         public bool WebElementExists(string sElementName)
         {
-            return m_webElementDictionary.ElementExists(sElementName);
+            return m_startingWebElementDictionary.ElementExists(sElementName);
         }
 
         public void AddSequence(string sName, Sequence sequence)
@@ -116,6 +123,11 @@ namespace SNMS_Server.Plugins
         public Sequence GetSequence(string sSequenceName)
         {
             return m_sequenceDictionary.GetSequence(sSequenceName);
+        }
+
+        public Sequence CloneSequence(string sSequenceName)
+        {
+            return m_sequenceDictionary.GetSequence(sSequenceName).Clone();
         }
     }
 }

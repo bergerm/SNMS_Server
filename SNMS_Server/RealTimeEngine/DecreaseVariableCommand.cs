@@ -10,13 +10,13 @@ namespace SNMS_Server.RealTimeEngine
     class DecreaseVariableCommand : GeneralCommand
     {
         string m_sVarName;
-        int m_dwIncreaseValue;
+        int m_dwDecreaseValue;
 
         public DecreaseVariableCommand(string sVarName, int dwIncreaseValue)
             : base("DecreaseVariable")
         {
             m_sVarName = sVarName;
-            m_dwIncreaseValue = dwIncreaseValue;
+            m_dwDecreaseValue = dwIncreaseValue;
         }
 
         protected override bool CommandLogic()
@@ -27,9 +27,15 @@ namespace SNMS_Server.RealTimeEngine
                 return false;
             }
 
-            ((IntVariable)tempVar).Decrease(m_dwIncreaseValue);
+            ((IntVariable)tempVar).Decrease(m_dwDecreaseValue);
             m_variableDictionary.SetVariable(m_sVarName, tempVar);
             return true;
-        }
+        }
+
+        public virtual Command Clone()
+        {
+            return new DecreaseVariableCommand(m_sVarName, m_dwDecreaseValue);
+        }
+
     }
 }

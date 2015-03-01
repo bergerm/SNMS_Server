@@ -30,6 +30,12 @@ namespace SNMS_Server.RealTimeEngine
             ((IntVariable)tempVar).Increase(m_dwIncreaseValue);
             m_variableDictionary.SetVariable(m_sVarName, tempVar);
             return true;
-        }
+        }
+
+        public virtual Command Clone()
+        {
+            return new IncreaseVariableCommand(m_sVarName, m_dwIncreaseValue);
+        }
+
     }
 }

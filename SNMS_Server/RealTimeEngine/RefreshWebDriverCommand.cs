@@ -17,5 +17,10 @@ namespace SNMS_Server.RealTimeEngine
             m_webDriver.Refresh();
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new RefreshWebDriverCommand();
+        }
     }
 }

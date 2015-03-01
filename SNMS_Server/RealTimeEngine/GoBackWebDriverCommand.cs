@@ -17,5 +17,10 @@ namespace SNMS_Server.RealTimeEngine
             m_webDriver.GoBack();
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new GoBackWebDriverCommand();
+        }
     }
 }

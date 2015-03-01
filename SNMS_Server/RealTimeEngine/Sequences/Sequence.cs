@@ -136,5 +136,30 @@ namespace SNMS_Server.RealTimeEngine.Sequences
                 }
             }
         }
+
+        public Sequence Clone()
+        {
+            Sequence newSequence = new Sequence(m_sSequenceName, m_variableDictionary.Clone(), m_webDriverElementDictionary.Clone(), null);
+            foreach (SequenceNode node in m_sequenceNodesList)
+            {
+                Command newCommand = node.GetCommand().Clone();
+                bool isConditional = node.IsNodeConditional();
+
+                if (newCommand is StringCommand)
+                {
+                    newSequence.AddCommand((StringCommand)newCommand, isConditional);
+                }
+                else if (newCommand is WebDriverCommand)
+                {
+                    newSequence.AddCommand((WebDriverCommand)newCommand, isConditional);
+                }
+                else if (newCommand is GeneralCommand)
+                {
+                    newSequence.AddCommand((GeneralCommand)newCommand, isConditional);
+                }
+            }
+
+            return newSequence;
+        }
     }
 }

@@ -29,6 +29,12 @@ namespace SNMS_Server.RealTimeEngine
             tempVar.SetVariable(m_sVarValue);
             m_variableDictionary.SetVariable(m_sVarName, tempVar);
             return true;
-        }
+        }
+
+        public virtual Command Clone()
+        {
+            return new SetVariableCommand(m_sVarName, m_sVarValue);
+        }
+
     }
 }

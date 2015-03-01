@@ -45,5 +45,15 @@ namespace SNMS_Server.Variables
 
             return m_dictionary[varName];
         }
+
+        public VariableDictionary Clone()
+        {
+            VariableDictionary newDict = new VariableDictionary();
+            foreach (KeyValuePair<string, Variable> entry in m_dictionary)
+            {
+                newDict.SetVariable(entry.Key, (Variable)entry.Value.Clone());
+            }
+            return newDict;
+        }
     }
 }

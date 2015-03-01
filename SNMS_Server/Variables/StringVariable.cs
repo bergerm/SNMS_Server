@@ -30,5 +30,10 @@ namespace SNMS_Server.Variables
         {
             m_sValue = sValue;
         }
+
+        public virtual Variable Clone()
+        {
+            return new StringVariable(m_sValue);
+        }
     }
 }

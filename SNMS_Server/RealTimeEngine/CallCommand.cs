@@ -40,5 +40,10 @@ namespace SNMS_Server.RealTimeEngine
             System.Console.WriteLine(sErrorString);
             return false;
         }
+
+        public virtual Command Clone()
+        {
+            return new CallCommand(m_sSequenceName);
+        }
     }
 }

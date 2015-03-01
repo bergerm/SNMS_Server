@@ -38,5 +38,10 @@ namespace SNMS_Server.RealTimeEngine
 
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new CheckTriggersCommand(m_sTriggersType, m_sReaction);
+        }
     }
 }

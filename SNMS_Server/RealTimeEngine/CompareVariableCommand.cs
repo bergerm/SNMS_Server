@@ -45,6 +45,12 @@ namespace SNMS_Server.RealTimeEngine
 
             m_variableDictionary.SetVariable("systemResultString", new StringVariable(sResult));
             return true;
-        }
+        }
+
+        public virtual Command Clone()
+        {
+            return new CompareVariableCommand(m_sVar1Name, m_sVar2Name);
+        }
+
     }
 }

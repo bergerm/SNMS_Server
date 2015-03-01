@@ -27,5 +27,10 @@ namespace SNMS_Server.RealTimeEngine
 
             return true;
         }
+
+        public virtual Command Clone()
+        {
+            return new CatenateStringCommand(m_sDestination, m_sSource1, m_bSource1IsVariable, m_sSource2, m_bSource2IsVariable);
+        }
     }
 }

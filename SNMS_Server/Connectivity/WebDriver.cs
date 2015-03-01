@@ -64,6 +64,11 @@ namespace SNMS_Server.Connectivity
             {
                 return m_webElement;
             }
+
+            public WebDriverElement Clone()
+            {
+                return new WebDriverElement(m_webElement);
+            }
         }
 
         WebDriverElement GetElement(WebDriverElement parentElement, By by)
