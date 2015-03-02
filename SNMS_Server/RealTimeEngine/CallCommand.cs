@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-using SNMS_Server.Plugins;
+using SNMS_Server.Configuations;
 using SNMS_Server.RealTimeEngine.Sequences;
 
 namespace SNMS_Server.RealTimeEngine
@@ -22,26 +22,21 @@ namespace SNMS_Server.RealTimeEngine
 
         override protected bool CommandLogic()
         {
-            Plugin plugin = m_sequence.GetPlugin();
-            Sequence sequence = plugin.GetSequence(m_sSequenceName);
-            if (sequence == null)
-            {
-                return false;
-            }
+            Configuration configuration = m_sequence.GetConfiguration();
 
             string sErrorString = "";
 
-            sequence.Run(ref sErrorString);
+            configuration.RunSequence(m_sSequenceName, ref sErrorString); 
+
             if (sErrorString == "")
             {
                 return true;
             }
 
-            System.Console.WriteLine(sErrorString);
             return false;
         }
 
-        public virtual Command Clone()
+        override public Command Clone()
         {
             return new CallCommand(m_sSequenceName);
         }

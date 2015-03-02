@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\Account.cs" />
-    <Compile Include="Configuation\Configuration.cs" />
+    <Compile Include="Configuation\Configurations.cs" />
     <Compile Include="Connectivity\ConnectivityModule.cs" />
     <Compile Include="Connectivity\WebDriver.cs" />
     <Compile Include="Connectivity\WebElementsDictionary.cs" />

@@ -45,7 +45,16 @@ namespace SNMS_Server.Connectivity
             WebElementsDictionary newDict = new WebElementsDictionary();
             foreach (KeyValuePair<string, WebDriver.WebDriverElement> entry in m_dictionary)
             {
-                newDict.SetElement(entry.Key, (WebDriver.WebDriverElement)entry.Value.Clone());
+                WebDriver.WebDriverElement element = (WebDriver.WebDriverElement)entry.Value;
+
+                if (element == null)
+                {
+                    newDict.SetElement(entry.Key, null);
+                }
+                else
+                {
+                    newDict.SetElement(entry.Key, element.Clone());
+                }
             }
             return newDict;
         }

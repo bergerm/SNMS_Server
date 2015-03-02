@@ -36,6 +36,6 @@ namespace SNMS_Server.Variables
             return m_sVariableType;
         }
 
-        public virtual Variable Clone();
+        public abstract Variable Clone();
     }
 }

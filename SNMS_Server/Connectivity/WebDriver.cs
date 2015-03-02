@@ -23,7 +23,14 @@ namespace SNMS_Server.Connectivity
 
         ~WebDriver()
         {
-            m_webDriver.Close();
+            try
+            {
+                m_webDriver.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public void GoTo(string url)

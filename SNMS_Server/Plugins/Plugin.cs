@@ -99,6 +99,11 @@ namespace SNMS_Server.Plugins
             return m_startingWebElementDictionary;
         }
 
+        public WebElementsDictionary CloneWebElementsDictionary()
+        {
+            return m_startingWebElementDictionary.Clone();
+        }
+
         public void SetWebElement(string sElementName, WebDriver.WebDriverElement element)
         {
             m_startingWebElementDictionary.SetElement(sElementName, element);
@@ -117,7 +122,6 @@ namespace SNMS_Server.Plugins
         public void AddSequence(string sName, Sequence sequence)
         {
             m_sequenceDictionary.SetSequence(sName, sequence);
-            sequence.SetPlugin(this);
         }
 
         public Sequence GetSequence(string sSequenceName)

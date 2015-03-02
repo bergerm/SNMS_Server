@@ -31,7 +31,7 @@ namespace SNMS_Server.Variables
             m_sValue = sValue;
         }
 
-        public virtual Variable Clone()
+        override public Variable Clone()
         {
             return new StringVariable(m_sValue);
         }

@@ -30,6 +30,11 @@ namespace SNMS_Server.RealTimeEngine
             m_variableDictionary = dict;
         }
 
+        public VariableDictionary GetVariableDictionary()
+        {
+            return m_variableDictionary;
+        }
+
         public void SetSequence(Sequence sequence)
         {
             m_sequence = sequence;
@@ -38,11 +43,6 @@ namespace SNMS_Server.RealTimeEngine
         public Sequence GetSequence()
         {
             return m_sequence;
-        }
-
-        public Plugin GetPlugin(Plugin plugin)
-        {
-           return m_sequence.GetPlugin();
         }
 
         abstract protected bool CommandLogic();
@@ -62,6 +62,6 @@ namespace SNMS_Server.RealTimeEngine
             return m_sCommandSubType;
         }
 
-        public virtual Command Clone();
+        public abstract Command Clone();
     }
 }

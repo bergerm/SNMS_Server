@@ -60,7 +60,7 @@ namespace SNMS_Server.RealTimeEngine
             return true;
         }
 
-        public virtual Command Clone()
+        override public Command Clone()
         {
             return new VariableContainsCommand(m_sVarName, m_sSource, m_bIsSourceVariable);
         }

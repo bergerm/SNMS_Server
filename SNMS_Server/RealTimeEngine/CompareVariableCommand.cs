@@ -47,7 +47,7 @@ namespace SNMS_Server.RealTimeEngine
             return true;
         }
 
-        public virtual Command Clone()
+        override public Command Clone()
         {
             return new CompareVariableCommand(m_sVar1Name, m_sVar2Name);
         }

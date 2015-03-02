@@ -28,18 +28,15 @@ namespace SNMS_Server.RealTimeEngine
             StringVariable responseVariable = new StringVariable("I am responding!");
             m_variableDictionary.SetVariable("respondToPost_responseString".ToLower(), responseVariable);
 
-            Sequence reactionSequence = m_sequence.GetPlugin().GetSequence("reactToWallPost");
-
             string sErrorString = "";
-
-            reactionSequence.Run(ref sErrorString);
+            m_sequence.GetConfiguration().RunSequence("reactToWallPost", ref sErrorString);
 
             System.Console.WriteLine(sErrorString);
 
             return true;
         }
 
-        public virtual Command Clone()
+        override public Command Clone()
         {
             return new CheckTriggersCommand(m_sTriggersType, m_sReaction);
         }

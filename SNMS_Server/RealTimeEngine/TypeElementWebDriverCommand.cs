@@ -47,7 +47,7 @@ namespace SNMS_Server.RealTimeEngine
             return true;
         }
 
-        public virtual Command Clone()
+        override public Command Clone()
         {
             return new TypeElementWebDriverCommand(m_sDestinationElementName, m_sString, m_bStringIsVariable);
         }

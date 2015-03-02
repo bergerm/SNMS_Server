@@ -9,7 +9,7 @@ using SNMS_Server.Variables;
 using SNMS_Server.Connectivity;
 using SNMS_Server.RealTimeEngine.Sequences;
 
-namespace SNMS_Server.Configuation
+namespace SNMS_Server.Configuations
 {
     class Configuration
     {
@@ -30,19 +30,20 @@ namespace SNMS_Server.Configuation
             m_sConfigurationName = sConfigurationName;
             m_plugin = plugin;
 
-            m_variableDictionary = new VariableDictionary();
+            //m_variableDictionary = new VariableDictionary();
+            m_variableDictionary = plugin.CloneVariableDictionary();
 
-            m_webElementDictionary = new WebElementsDictionary();
+            m_webElementDictionary = plugin.CloneWebElementsDictionary();
             m_webDriver = new WebDriver();
         }
 
-        public void RunSequence(string sSequenceName)
+        public void RunSequence(string sSequenceName, ref string sErrorString)
         {
             Sequence sequence = m_plugin.CloneSequence(sSequenceName);
+            sequence.SetConfiguration(this);
             sequence.UpdateCommandsVariableDictionary(m_variableDictionary);
             sequence.UpdateCommandsWebDriver(m_webDriver,m_webElementDictionary);
 
-            string sErrorString = "";
             sequence.Run(ref sErrorString);
 
             if (sErrorString != "")
@@ -50,6 +51,24 @@ namespace SNMS_Server.Configuation
                 System.Console.WriteLine("Error on Sequence " + sSequenceName + " on plugin " + m_plugin.GetPluginName() + ":");
                 System.Console.WriteLine(sErrorString);
             }
+        }
+
+        public Variable GetVariable(string sVarName)
+        {
+            return m_variableDictionary.GetVariable(sVarName);
+        }
+
+        public bool SetVariable(string sVarName, string sVarValue)
+        {
+            Variable tempVar = m_variableDictionary.GetVariable(sVarName.ToLower());
+            if (tempVar == null)
+            {
+                return false;
+            }
+
+            tempVar.SetVariable(sVarValue);
+            m_variableDictionary.SetVariable(sVarName, tempVar);
+            return true;
         }
     }
 }

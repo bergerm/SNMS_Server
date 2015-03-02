@@ -8,13 +8,14 @@ using SNMS_Server.Variables;
 using SNMS_Server.RealTimeEngine;
 using SNMS_Server.Connectivity;
 using SNMS_Server.Plugins;
+using SNMS_Server.Configuations;
 
 namespace SNMS_Server.RealTimeEngine.Sequences
 {
     class Sequence
     {
         string m_sSequenceName;
-        Plugin m_plugin;
+        Configuration m_configuration;
         VariableDictionary m_variableDictionary;
         WebElementsDictionary m_webDriverElementDictionary;
         WebDriver m_webDriver;
@@ -32,31 +33,34 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             m_sequenceNodesList = new List<SequenceNode>();
         }
 
-        void Add(Command command, bool isConditional = false)
+        SequenceNode Add(Command command, bool isConditional = false)
         {
             int index = m_sequenceNodesList.Count;
             command.SetSequence(this);
-            m_sequenceNodesList.Add(new SequenceNode(index, command, isConditional));
+            SequenceNode newNode = new SequenceNode(index, command, isConditional);
+            m_sequenceNodesList.Add(newNode);
+
+            return newNode;
         }
 
-        public void AddCommand(StringCommand command, bool isConditional = false)
+        public SequenceNode AddCommand(StringCommand command, bool isConditional = false)
         {
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command, isConditional);
+            return Add(command, isConditional);
         }
 
-        public void AddCommand(WebDriverCommand command, bool isConditional = false)
+        public SequenceNode AddCommand(WebDriverCommand command, bool isConditional = false)
         {
             command.SetWebDriver(m_webDriver);
             command.SetWebElementsDictionary(m_webDriverElementDictionary);
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command, isConditional);
+            return Add(command, isConditional);
         }
 
-        public void AddCommand(GeneralCommand command, bool isConditional = false)
+        public SequenceNode AddCommand(GeneralCommand command, bool isConditional = false)
         {
             command.SetVariableDictionary(m_variableDictionary);
-            Add(command, isConditional);
+            return Add(command, isConditional);
         }
 
         public void UpdateSequenceNodeNextNodeValue(int dwNodeIndex, bool bCondition, int dwNewNextNode)
@@ -77,7 +81,8 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             foreach (SequenceNode node in m_sequenceNodesList)
             {
                 Command cmd = node.GetCommand();
-                if (cmd.GetCommandType() == "WebDriver")
+                //if (cmd.GetCommandType() == "WebDriverCommand")
+                if (cmd is WebDriverCommand)
                 {
                     ((WebDriverCommand)cmd).SetWebDriver(newWebDriver);
                     ((WebDriverCommand)cmd).SetWebElementsDictionary(newDict);
@@ -85,14 +90,14 @@ namespace SNMS_Server.RealTimeEngine.Sequences
             }
         }
 
-        public void SetPlugin(Plugin plugin)
+        public void SetConfiguration(Configuration configuration)
         {
-            m_plugin = plugin;
+            m_configuration = configuration;
         }
 
-        public Plugin GetPlugin()
+        public Configuration GetConfiguration()
         {
-            return m_plugin;
+            return m_configuration;
         }
 
         public void Run(ref string sErrorString)
@@ -117,7 +122,7 @@ namespace SNMS_Server.RealTimeEngine.Sequences
 
                 if (currentNode.IsNodeConditional())
                 {
-                    string sResultString = m_variableDictionary.GetVariable("systemResultString").GetString().ToLower();
+                    string sResultString = currentNode.GetCommand().GetVariableDictionary().GetVariable("systemResultString").GetString().ToLower();
                     if (sResultString == "false")
                     {
                         bConditionResult = false;
@@ -145,18 +150,22 @@ namespace SNMS_Server.RealTimeEngine.Sequences
                 Command newCommand = node.GetCommand().Clone();
                 bool isConditional = node.IsNodeConditional();
 
+                SequenceNode newNode = null;
+
                 if (newCommand is StringCommand)
                 {
-                    newSequence.AddCommand((StringCommand)newCommand, isConditional);
+                    newNode = newSequence.AddCommand((StringCommand)newCommand, isConditional);
                 }
                 else if (newCommand is WebDriverCommand)
                 {
-                    newSequence.AddCommand((WebDriverCommand)newCommand, isConditional);
+                    newNode = newSequence.AddCommand((WebDriverCommand)newCommand, isConditional);
                 }
                 else if (newCommand is GeneralCommand)
                 {
-                    newSequence.AddCommand((GeneralCommand)newCommand, isConditional);
+                    newNode = newSequence.AddCommand((GeneralCommand)newCommand, isConditional);
                 }
+                newNode.SetNextNode(node.GetNextNode(true), true);
+                newNode.SetNextNode(node.GetNextNode(false), false);
             }
 
             return newSequence;
