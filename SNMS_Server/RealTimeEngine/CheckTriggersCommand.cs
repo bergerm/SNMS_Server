@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.Threading;
 
 using SNMS_Server.Plugins;
-using SNMS_Server.RealTimeEngine.Sequences;
+using SNMS_Server.RealTimeEngines.Sequences;
 using SNMS_Server.Variables;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class CheckTriggersCommand : GeneralCommand
     {

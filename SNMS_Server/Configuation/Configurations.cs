@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using SNMS_Server.Plugins;
 using SNMS_Server.Variables;
 using SNMS_Server.Connectivity;
-using SNMS_Server.RealTimeEngine.Sequences;
+using SNMS_Server.RealTimeEngines.Sequences;
 
-namespace SNMS_Server.Configuations
+namespace SNMS_Server.Configurations
 {
     class Configuration
     {

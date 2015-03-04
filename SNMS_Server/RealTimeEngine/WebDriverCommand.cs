@@ -9,7 +9,7 @@ using OpenQA.Selenium.Interactions;
 
 using SNMS_Server.Connectivity;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     abstract class WebDriverCommand : Command
     {

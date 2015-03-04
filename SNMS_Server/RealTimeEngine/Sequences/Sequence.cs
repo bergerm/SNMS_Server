@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 using SNMS_Server.Variables;
-using SNMS_Server.RealTimeEngine;
+using SNMS_Server.RealTimeEngines;
 using SNMS_Server.Connectivity;
 using SNMS_Server.Plugins;
-using SNMS_Server.Configuations;
+using SNMS_Server.Configurations;
 
-namespace SNMS_Server.RealTimeEngine.Sequences
+namespace SNMS_Server.RealTimeEngines.Sequences
 {
     class Sequence
     {

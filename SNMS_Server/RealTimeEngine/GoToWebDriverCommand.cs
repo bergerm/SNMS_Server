@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class GoToWebDriverCommand : WebDriverCommand
     {

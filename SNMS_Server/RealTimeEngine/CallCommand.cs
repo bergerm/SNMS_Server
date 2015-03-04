@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-using SNMS_Server.Configuations;
-using SNMS_Server.RealTimeEngine.Sequences;
+using SNMS_Server.Configurations;
+using SNMS_Server.RealTimeEngines.Sequences;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class CallCommand : GeneralCommand
     {

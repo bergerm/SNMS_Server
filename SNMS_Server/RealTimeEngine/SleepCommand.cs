@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class SleepCommand : GeneralCommand
     {

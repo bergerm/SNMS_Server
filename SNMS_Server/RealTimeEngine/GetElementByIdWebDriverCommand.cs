@@ -7,7 +7,7 @@ using SNMS_Server.Connectivity;
 
 using SNMS_Server.Variables;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class GetElementByIdWebDriverCommand : WebDriverCommand
     {

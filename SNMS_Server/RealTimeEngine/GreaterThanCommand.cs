@@ -7,7 +7,7 @@ using SNMS_Server.Variables;
 
 using System.Text.RegularExpressions;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class GreaterThanCommand : GeneralCommand
     {

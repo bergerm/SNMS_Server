@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SNMS_Server.RealTimeEngine.Sequences
+namespace SNMS_Server.RealTimeEngines.Sequences
 {
     class SequenceNode
     {

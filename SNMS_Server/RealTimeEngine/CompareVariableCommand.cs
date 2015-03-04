@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SNMS_Server.Variables;
 
-namespace SNMS_Server.RealTimeEngine
+namespace SNMS_Server.RealTimeEngines
 {
     class CompareVariableCommand : GeneralCommand
     {

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using SNMS_Server.Variables;
-using SNMS_Server.RealTimeEngine;
-using SNMS_Server.RealTimeEngine.Sequences;
+using SNMS_Server.RealTimeEngines;
+using SNMS_Server.RealTimeEngines.Sequences;
 
 namespace SNMS_Server.Plugins
 {
