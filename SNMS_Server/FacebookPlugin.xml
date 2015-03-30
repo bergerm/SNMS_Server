@@ -274,7 +274,7 @@
   <Sequence name="reactToWallPost">
     <SetVariable>
       <Destination>respondToPost_commentButtonXPath</Destination>
-      <String>(//input[@value='Comment'])[</String>
+      <String>//div[</String>
     </SetVariable>
 
     <CatenateString>
@@ -292,7 +292,7 @@
       <Source1>
         <Variable>respondToPost_commentButtonXPath</Variable>
       </Source1>
-      <Source2>]</Source2>
+      <Source2>]/div/div[5]/form/div/div[2]/div/div/span[2]/a/span</Source2>
     </CatenateString>
     
     <GetItem name="reactToWallPost_commentButton">
@@ -303,9 +303,13 @@
       </SearchValue>
     </GetItem>
 
+    <Sleep>300</Sleep>
+    
     <Click>
       <Destination>reactToWallPost_commentButton</Destination>
     </Click>
+
+    <Sleep>1000</Sleep>
 
     <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
 
