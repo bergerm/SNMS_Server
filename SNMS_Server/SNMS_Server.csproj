@@ -74,6 +74,9 @@
     <Compile Include="Connectivity\ConnectivityModule.cs" />
     <Compile Include="Connectivity\WebDriver.cs" />
     <Compile Include="Connectivity\WebElementsDictionary.cs" />
+    <Compile Include="Factories\AccountFactory.cs" />
+    <Compile Include="Factories\PluginBuilder.cs" />
+    <Compile Include="Factories\PluginFactory.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginParser.cs" />
     <Compile Include="Program.cs" />
