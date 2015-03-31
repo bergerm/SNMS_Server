@@ -23,6 +23,9 @@ namespace SNMS_Server.Plugins
 
         SequenceDictionary m_sequenceDictionary;
 
+        List<string> m_StartupSequences;
+        List<SequenceTimer> m_timerList;
+
         XmlDocument m_xmlDoc;
 
         public Plugin()
@@ -132,6 +135,26 @@ namespace SNMS_Server.Plugins
         public Sequence CloneSequence(string sSequenceName)
         {
             return m_sequenceDictionary.GetSequence(sSequenceName).Clone();
+        }
+
+        public void AddTimer(SequenceTimer timer)
+        {
+            m_timerList.Add(timer);
+        }
+
+        public List<SequenceTimer> GetTimers()
+        {
+            return m_timerList;
+        }
+
+        public void AddStartupSequence(string sSequenceName)
+        {
+            m_StartupSequences.Add(sSequenceName);
+        }
+
+        public List<string> GetStartupSequences()
+        {
+            return m_StartupSequences;
         }
     }
 }

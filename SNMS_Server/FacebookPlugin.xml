@@ -336,5 +336,17 @@
 
   </Sequence>
   
+  <!-- Sequences that run on start -->
+  <Start>
+    <Sequence>setup</Sequence>
+    <Sequence>login</Sequence>
+  </Start>
+  
+<!-- Timers -->
+  <Timer>
+    <SequenceName>checkWallMessage</SequenceName>
+    <Period>3</Period>
+  </Timer>
+  
 </Plugin>
 

@@ -18,7 +18,9 @@ namespace SNMS_Server
 {
     class Program
     {
+        const string TCP_HOST = "127.0.0.1";
         const int TCP_PORT = 56824;
+        const string PLUGIN_FOLDER_PATH = "..\\..\\";
 
         static void Main(string[] args)
         {
@@ -29,14 +31,14 @@ namespace SNMS_Server
             connectionMessage.AddParameter("server");
 
             TcpClient client = new TcpClient();
-            client.Connect("127.0.0.1", TCP_PORT);
+            client.Connect(TCP_HOST, TCP_PORT);
 
             NetworkStream stream = client.GetStream();
 
             ConnectionHandler.SendMessage(stream, connectionMessage);
             ProtocolMessage responseMessage = ConnectionHandler.GetMessage(stream);
 
-            PluginParser parser = new PluginParser();
+            /*PluginParser parser = new PluginParser();
             Plugin plugin = parser.ParsePlugin("..\\..\\FacebookPlugin.xml", ref sErrorString);
 
             if (sErrorString != "")
@@ -57,7 +59,7 @@ namespace SNMS_Server
             RealTimeEngine rtEngine = new RealTimeEngine();
             rtEngine.AddConfiguration("testConfigurationForFacebook", configuration);
             rtEngine.SetSchedule("testConfigurationForFacebook", "checkWall", 1);
-            //configuration.RunSequence("checkWall", ref sErrorString);
+            //configuration.RunSequence("checkWall", ref sErrorString);*/
 
             System.Console.ReadLine();
         }

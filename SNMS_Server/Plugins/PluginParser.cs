@@ -639,6 +639,26 @@ namespace SNMS_Server.Plugins
                 plugin.AddSequence(sequenceName, sequence);
             }
 
+            // Get Startup Sequences
+            XmlNode pluginStartupSequences = pluginNode.SelectSingleNode("Start");
+            XmlNodeList sequences = pluginStartupSequences.SelectNodes("Sequence");
+            foreach (XmlNode sequenceNode in sequences)
+            {
+                string sSequenceName = sequenceNode.InnerText;
+                plugin.AddStartupSequence(sSequenceName);
+            }
+
+            // Get Timers
+            XmlNodeList pluginTimers = pluginNode.SelectNodes("Timer");
+            foreach (XmlNode timerNode in pluginTimers)
+            {
+                SequenceTimer timer = new SequenceTimer();
+                timer.SetSequenceName(timerNode.SelectSingleNode("SequenceName").InnerText);
+                timer.SetPeriod(Int32.Parse(timerNode.SelectSingleNode("Period").InnerText));
+
+                plugin.AddTimer(timer);
+            }
+
             return plugin;
         }
     }
