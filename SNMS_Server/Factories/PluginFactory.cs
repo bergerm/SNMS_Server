@@ -12,24 +12,31 @@ namespace SNMS_Server.Factories
 {
     class PluginFactory
     {
-        static List<Plugin> Build(string sPluginFilesFolderPath)
+        public static List<Plugin> Build(string sPluginFilesFolderPath)
         {
-            // TODO: Should download all plugins from DB here
+            // TODO: Should download all plugins from DB here and load them instead of this.
+            List<int> pluginIDs = new List<int>();
+            pluginIDs.Add(6);
+            List<string> pluginPaths = new List<string>();
+            pluginPaths.Add("..\\..\\WorkingPlugins\\FacebookPlugin.xml");
 
-            string[] filePaths = Directory.GetFiles(sPluginFilesFolderPath);
+            //string[] filePaths = Directory.GetFiles(sPluginFilesFolderPath);
 
             string sErrorString = "";
 
             List<Plugin> pluginList = new List<Plugin>();
 
-            foreach (string filePath in filePaths)
+            int index = 0;
+            foreach (string filePath in pluginPaths)
             {
-                Plugin plugin = PluginBuilder.Build(filePath, ref sErrorString);
+                Plugin plugin = PluginBuilder.Build(pluginIDs[index], filePath, ref sErrorString);
 
                 if (plugin != null)
                 {
                     pluginList.Add(plugin);
                 }
+
+                index++;
             }
 
             return pluginList;

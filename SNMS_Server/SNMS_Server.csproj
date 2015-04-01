@@ -75,6 +75,7 @@
     <Compile Include="Connectivity\WebDriver.cs" />
     <Compile Include="Connectivity\WebElementsDictionary.cs" />
     <Compile Include="Factories\AccountFactory.cs" />
+    <Compile Include="Factories\ConfigurationFactory.cs" />
     <Compile Include="Factories\PluginBuilder.cs" />
     <Compile Include="Factories\PluginFactory.cs" />
     <Compile Include="Plugins\Plugin.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="RealTimeEngine\CompareVariableCommand.cs" />
     <Compile Include="RealTimeEngine\CallCommand.cs" />
     <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
+    <Compile Include="RealTimeEngine\CheckElementVisibleWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GetActiveElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\SequenceTimer.cs" />
     <Compile Include="RealTimeEngine\VariableContainsCommand.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="RealTimeEngine\RealTimeEngine.cs" />
     <Compile Include="RealTimeEngine\WebDriverCommand.cs" />
     <Compile Include="Triggers\Trigger.cs" />
+    <Compile Include="Triggers\TriggerGroup.cs" />
+    <Compile Include="Triggers\TriggerGroupDictionary.cs" />
     <Compile Include="Variables\StringVariable.cs" />
     <Compile Include="Variables\IntVariable.cs" />
     <Compile Include="Variables\Variable.cs" />
@@ -128,6 +132,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="FacebookPlugin.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="WorkingPlugins\FacebookPlugin.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sampleCommands.xml" />

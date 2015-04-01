@@ -30,6 +30,19 @@ namespace SNMS_Server.RealTimeEngines.Sequences
             m_dictionary[sequenceName] = sequence;
         }
 
+        public Sequence GetSequence(int id)
+        {
+            foreach (Sequence seq in m_dictionary.Values)
+            {
+                if (seq.GetID() == id)
+                {
+                    return seq;
+                }
+            }
+
+            return null;
+        }
+
         public Sequence GetSequence(string sequenceName)
         {
             if (!SequenceExists(sequenceName))
@@ -38,6 +51,16 @@ namespace SNMS_Server.RealTimeEngines.Sequences
             }
 
             return m_dictionary[sequenceName];
+        }
+
+        public SequenceDictionary Clone()
+        {
+            SequenceDictionary newDict = new SequenceDictionary();
+            foreach (KeyValuePair<string, Sequence> entry in m_dictionary)
+            {
+                newDict.SetSequence(entry.Key, (Sequence)entry.Value.Clone());
+            }
+            return newDict;
         }
     }
 }

@@ -14,8 +14,10 @@ namespace SNMS_Server.RealTimeEngines.Sequences
 {
     class Sequence
     {
+        int m_dwID;
         string m_sSequenceName;
         Configuration m_configuration;
+        bool m_bIsEnabled;
         VariableDictionary m_variableDictionary;
         WebElementsDictionary m_webDriverElementDictionary;
         WebDriver m_webDriver;
@@ -24,14 +26,26 @@ namespace SNMS_Server.RealTimeEngines.Sequences
         public Sequence(    string sSequenceName,
                             VariableDictionary varDict,
                             WebElementsDictionary webElementDict,
-                            WebDriver webDriver )
+                            WebDriver webDriver,
+                            bool isEnabled)
         {
+            m_dwID = 0;
             m_sSequenceName = sSequenceName;
             m_variableDictionary = varDict;
             m_webDriverElementDictionary = webElementDict;
             m_webDriver = webDriver;
             m_sequenceNodesList = new List<SequenceNode>();
+            m_bIsEnabled = isEnabled;
         }
+
+        public void SetID(int dwID) { m_dwID = dwID; }
+        public int GetID() { return m_dwID; }
+
+        public void SetEnabled(bool isEnabled) { m_bIsEnabled = isEnabled; }
+        public bool GetEnabled() { return m_bIsEnabled; }
+
+        public void SetName(string sName) { m_sSequenceName = sName; }
+        public string GetName() { return m_sSequenceName; }
 
         SequenceNode Add(Command command, bool isConditional = false)
         {
@@ -102,6 +116,11 @@ namespace SNMS_Server.RealTimeEngines.Sequences
 
         public void Run(ref string sErrorString)
         {
+            if (!m_bIsEnabled)
+            {
+                return;
+            }
+
             if (m_sequenceNodesList.Count <= 0)
             {
                 sErrorString = sErrorString + "Sequence " + m_sSequenceName + " is empty! - ABORTED; ";
@@ -144,7 +163,7 @@ namespace SNMS_Server.RealTimeEngines.Sequences
 
         public Sequence Clone()
         {
-            Sequence newSequence = new Sequence(m_sSequenceName, m_variableDictionary.Clone(), m_webDriverElementDictionary.Clone(), null);
+            Sequence newSequence = new Sequence(m_sSequenceName, m_variableDictionary.Clone(), m_webDriverElementDictionary.Clone(), null, m_bIsEnabled);
             foreach (SequenceNode node in m_sequenceNodesList)
             {
                 Command newCommand = node.GetCommand().Clone();

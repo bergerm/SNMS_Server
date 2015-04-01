@@ -38,7 +38,20 @@ namespace SNMS_Server.Variables
 
         override public void SetVariable(string sValue)
         {
-            m_dwValue = Int32.Parse(sValue);
+            if (sValue == "")
+            {
+                m_dwValue = 0;
+                return;
+            }
+
+            try
+            {
+                m_dwValue = Int32.Parse(sValue);
+            }
+            catch (Exception e)
+            {
+                m_dwValue = 0;
+            }
         }
 
         override public Variable Clone()

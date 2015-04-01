@@ -18,6 +18,11 @@
   <Variable name="SystemReactionSequence">
     <VariableType>string</VariableType>
   </Variable>
+
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemReactionValue">
+    <VariableType>string</VariableType>
+  </Variable>
   
   <!-- Constants for entire system -->
   <Constant name="baseURL">
@@ -253,6 +258,7 @@
     <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
     <CheckTriggers>
       <TriggerType>wallPost</TriggerType>
+      <VariableName>checkWall_itemText</VariableName>
       <Reaction>reactToWallPost</Reaction>
     </CheckTriggers>
 
@@ -272,6 +278,21 @@
 
   <!-- React to a wall post -->
   <Sequence name="reactToWallPost">
+    <SetVariable>
+      <Destination>respondToPost_responseString</Destination>
+      <String></String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>
+        <Variable>SystemReactionValue</Variable>
+      </Source2>
+    </CatenateString>
+
     <SetVariable>
       <Destination>respondToPost_commentButtonXPath</Destination>
       <String>//div[</String>
@@ -312,7 +333,7 @@
     <Sleep>1000</Sleep>
 
     <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
-
+    
     <CatenateString>
       <Destination>respondToPost_responseString</Destination>
       <Source1>

@@ -13,12 +13,14 @@ namespace SNMS_Server.Connectivity
     class WebDriver : ConnectivityModule
     {
         IWebDriver m_webDriver;
+        string m_windowHandle;
 
         public WebDriver()
         {
             m_webDriver = new FirefoxDriver();
             //m_webDriver.Navigate().GoToUrl("http://www.yahoo.com");
             //GoTo("www.gmail.com");
+            m_windowHandle = m_webDriver.WindowHandles[0];
         }
 
         ~WebDriver()
@@ -31,6 +33,11 @@ namespace SNMS_Server.Connectivity
             {
 
             }
+        }
+
+        public void BringToFront()
+        {
+            m_webDriver.SwitchTo().Window(m_windowHandle);
         }
 
         public void GoTo(string url)
@@ -153,6 +160,7 @@ namespace SNMS_Server.Connectivity
 
         public WebDriverElement GetActiveElement()
         {
+            BringToFront();
             return new WebDriverElement(m_webDriver.SwitchTo().ActiveElement());
         }
     }

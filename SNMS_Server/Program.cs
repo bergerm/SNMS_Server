@@ -13,6 +13,7 @@ using SNMS_Server.RealTimeEngines.Sequences;
 using SNMS_Server.Plugins;
 using SNMS_Server.Configurations;
 using SNMS_Server.Connection;
+using SNMS_Server.Factories;
 
 namespace SNMS_Server
 {
@@ -20,7 +21,7 @@ namespace SNMS_Server
     {
         const string TCP_HOST = "127.0.0.1";
         const int TCP_PORT = 56824;
-        const string PLUGIN_FOLDER_PATH = "..\\..\\";
+        const string PLUGIN_FOLDER_PATH = "..\\..\\WorkingPlugins\\";
 
         static void Main(string[] args)
         {
@@ -38,6 +39,38 @@ namespace SNMS_Server
             ConnectionHandler.SendMessage(stream, connectionMessage);
             ProtocolMessage responseMessage = ConnectionHandler.GetMessage(stream);
 
+            //test
+            RealTimeEngine rtEngine = new RealTimeEngine();
+
+            List<Plugin> listOfPlugins = PluginFactory.Build(PLUGIN_FOLDER_PATH);
+            foreach(Plugin plugin in listOfPlugins)
+            {
+                List<Account> listOfAccounts = AccountFactory.Build(plugin, stream);
+                foreach (Account account in listOfAccounts)
+                {
+                    List<Configuration> listOfConfigurations = ConfigurationFactory.Build(account, stream);
+                    foreach (Configuration configuration in listOfConfigurations)
+                    {
+                        List<string> sStartupSequences = plugin.GetStartupSequences();
+                        foreach (string seqName in sStartupSequences)
+                        {
+                            configuration.RunSequence(seqName, ref sErrorString);
+                            if (sErrorString != "")
+                            {
+                                return;
+                            }
+                        }
+
+                        rtEngine.AddConfiguration(configuration.GetName(), configuration);
+                        List<SequenceTimer> timers = plugin.GetTimers();
+                        foreach(SequenceTimer timer in timers)
+                        {
+                            rtEngine.SetSchedule(configuration.GetName(), timer.GetSequenceName(), timer.GetPeriod());
+                        }
+                    }
+                }
+            }
+            
             /*PluginParser parser = new PluginParser();
             Plugin plugin = parser.ParsePlugin("..\\..\\FacebookPlugin.xml", ref sErrorString);
 

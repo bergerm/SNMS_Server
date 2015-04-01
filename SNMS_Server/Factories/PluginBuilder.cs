@@ -10,11 +10,14 @@ namespace SNMS_Server.Factories
 {
     class PluginBuilder
     {
-        public static Plugin Build(string sFilePath, ref string sErrorString)
+        public static Plugin Build(int dwPluginID, string sFilePath, ref string sErrorString)
         {
             PluginParser parser = new PluginParser();
 
-            return parser.ParsePlugin(sFilePath, ref sErrorString);
+            Plugin plugin = parser.ParsePlugin(sFilePath, ref sErrorString);
+            plugin.SetID(dwPluginID);
+
+            return plugin;
         }
     }
 }

@@ -185,6 +185,12 @@ namespace SNMS_Server.Plugins
                     GetActiveElementWebDriverCommand getActiveElementCommand = new GetActiveElementWebDriverCommand(sGetActiveItemDestination);
                     sequence.AddCommand(getActiveElementCommand);
                     break;
+                    
+                case "CheckItemVisible":
+                    string sCheckElementVisibleName = commandNode.SelectSingleNode("ItemName").InnerText;
+                    CheckElementVisibleWebDriverCommand checkElementVisibleCommand = new CheckElementVisibleWebDriverCommand(sCheckElementVisibleName);
+                    sequence.AddCommand(checkElementVisibleCommand, isConditionalNode);
+                    break;
 
                 case "GoBack":
                     GoBackWebDriverCommand goBackCommand = new GoBackWebDriverCommand();
@@ -412,8 +418,9 @@ namespace SNMS_Server.Plugins
 
                 case "CheckTriggers":
                     string sTriggersType = commandNode.SelectSingleNode("TriggerType").InnerText;
+                    string sVariableName = commandNode.SelectSingleNode("VariableName").InnerText;
                     string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
-                    CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sReaction);
+                    CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sVariableName, sReaction);
                     sequence.AddCommand(checkTriggerCommand, isConditionalNode);
                     break;
 
@@ -536,7 +543,8 @@ namespace SNMS_Server.Plugins
                 Sequence sequence = new Sequence(   sequenceName,
                                                     plugin.GetVariableDictionary(), 
                                                     plugin.GetWebElementsDictionary(), 
-                                                    plugin.GetWebDriver()               );
+                                                    plugin.GetWebDriver(),
+                                                    true);
 
                 if (sequenceName == "")
                 {

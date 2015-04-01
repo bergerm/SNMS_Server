@@ -10,6 +10,7 @@ namespace SNMS_Server.Variables
     {
         string m_sVariableType;
         bool m_bIsConstant;
+        bool m_bIsEnabled;
 
         public Variable(string type, bool bIsConstant)
         {

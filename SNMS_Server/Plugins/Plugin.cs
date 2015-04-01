@@ -37,16 +37,21 @@ namespace SNMS_Server.Plugins
             m_webDriver = null;
 
             m_sequenceDictionary = new SequenceDictionary();
+            m_StartupSequences = new List<string>();
+            m_timerList = new List<SequenceTimer>();
+        }
+
+        public void SetID(int id) { m_dwPluginId = id; }
+        public int GetID() { return m_dwPluginId; }
+
+        public string GetPluginName()
+        {
+            return m_sPluginName;
         }
 
         public void SetPluginName(string sName)
         {
             m_sPluginName = sName;
-        }
-
-        public string GetPluginName()
-        {
-            return m_sPluginName;
         }
 
         public void SetPluginVersion(string sVersion)
@@ -135,6 +140,11 @@ namespace SNMS_Server.Plugins
         public Sequence CloneSequence(string sSequenceName)
         {
             return m_sequenceDictionary.GetSequence(sSequenceName).Clone();
+        }
+
+        public SequenceDictionary CloneSequenceDictionary()
+        {
+            return m_sequenceDictionary.Clone();
         }
 
         public void AddTimer(SequenceTimer timer)
