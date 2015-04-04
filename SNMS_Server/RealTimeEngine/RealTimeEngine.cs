@@ -25,16 +25,16 @@ namespace SNMS_Server.RealTimeEngines
             m_mutex = new Mutex();
         }
 
-        void RunSequence(string sSequenceName)
+        void RunSequence(string sSequenceName, Mutex mutex)
         {
             m_mutex.WaitOne();
-            m_configuration.RunSequence(sSequenceName, ref m_sErrorString);
+            m_configuration.RunSequence(sSequenceName, ref m_sErrorString, mutex);
             m_mutex.ReleaseMutex();
         }
 
-        public void ScheduleSequence(string sSequenceName, int dwInterval)
+        public void ScheduleSequence(string sSequenceName, int dwInterval, Mutex mutex)
         {
-            Timer timer = new Timer(e => RunSequence(sSequenceName),
+            Timer timer = new Timer(e => RunSequence(sSequenceName, mutex),
                                         null,
                                         TimeSpan.Zero,
                                         TimeSpan.FromMinutes(dwInterval));
@@ -50,6 +50,11 @@ namespace SNMS_Server.RealTimeEngines
                 timer.Dispose();  
             }
             m_mutex.ReleaseMutex();
+        }
+
+        public void CloseWebDrivers()
+        {
+            m_configuration.CloseWebDriver();
         }
     }
 
@@ -68,14 +73,14 @@ namespace SNMS_Server.RealTimeEngines
             m_configurationSchedulerDictionary[sConfigurationName] = scheduler;
         }
 
-        public bool SetSchedule(string sConfigurationName, string sSequenceName, int dwInterval)
+        public bool SetSchedule(string sConfigurationName, string sSequenceName, int dwInterval, Mutex mutex)
         {
             if (!m_configurationSchedulerDictionary.Keys.Contains(sConfigurationName))
             {
                 return false;
             }
 
-            m_configurationSchedulerDictionary[sConfigurationName].ScheduleSequence(sSequenceName, dwInterval);
+            m_configurationSchedulerDictionary[sConfigurationName].ScheduleSequence(sSequenceName, dwInterval, mutex);
             return true;
         }
 
@@ -84,6 +89,14 @@ namespace SNMS_Server.RealTimeEngines
             foreach (KeyValuePair<string, ConfigurationScheduler> pair in m_configurationSchedulerDictionary)
             {
                 pair.Value.StopTimers();
+            }
+        }
+
+        public void CloseWebDrivers()
+        {
+            foreach (KeyValuePair<string, ConfigurationScheduler> pair in m_configurationSchedulerDictionary)
+            {
+                pair.Value.CloseWebDrivers();
             }
         }
     }

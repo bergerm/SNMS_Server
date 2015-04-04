@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Threading;
 
 using SNMS_Server.Plugins;
 using SNMS_Server.Variables;
@@ -73,12 +74,18 @@ namespace SNMS_Server.Configurations
             m_webElementDictionary.Clear();
         }
 
-        public void RunSequence(Sequence sequence, ref string sErrorString)
+        public void RunSequence(Sequence sequence, ref string sErrorString, Mutex mutex)
         {
             if (!sequence.GetEnabled())
             {
                 return;
             }
+
+            if (mutex != null)
+            {
+                mutex.WaitOne();
+            }
+
             sequence.SetConfiguration(this);
             sequence.UpdateCommandsVariableDictionary(m_variableDictionary);
             sequence.UpdateCommandsWebDriver(m_webDriver, m_webElementDictionary);
@@ -90,9 +97,14 @@ namespace SNMS_Server.Configurations
                 System.Console.WriteLine("Error on Sequence " + sequence.GetName() + " on plugin " + m_account.GetPlugin().GetPluginName() + ":");
                 System.Console.WriteLine(sErrorString);
             }
+
+            if (mutex != null)
+            {
+                mutex.ReleaseMutex();
+            }
         }
 
-        public void RunSequence(string sSequenceName, ref string sErrorString)
+        public void RunSequence(string sSequenceName, ref string sErrorString, Mutex mutex)
         {
             if (!m_bIsEnabled)
             {
@@ -107,7 +119,7 @@ namespace SNMS_Server.Configurations
                 return;
             }
 
-            RunSequence(sequence, ref sErrorString);
+            RunSequence(sequence, ref sErrorString, mutex);
         }
 
         public Sequence GetSequence(string sSequenceName)
@@ -188,6 +200,16 @@ namespace SNMS_Server.Configurations
             }
 
             return configurationList;
+        }
+
+        public void CloseWebDriver()
+        {
+            if (m_webDriver == null)
+            {
+                return;
+            }
+
+            m_webDriver.Close();
         }
     }
 }

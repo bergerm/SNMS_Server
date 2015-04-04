@@ -52,7 +52,7 @@ namespace SNMS_Server.RealTimeEngines
                     string sReactionValue = trigger.GetReactionValue();
 
                     m_variableDictionary.SetVariable("SystemReactionValue".ToLower(), new StringVariable(sReactionValue));
-                    configuration.RunSequence(reaction, ref sErrorString);
+                    configuration.RunSequence(reaction, ref sErrorString, null);
 
                     if (sErrorString != "")
                     {

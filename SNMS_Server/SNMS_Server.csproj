@@ -78,6 +78,7 @@
     <Compile Include="Factories\ConfigurationFactory.cs" />
     <Compile Include="Factories\PluginBuilder.cs" />
     <Compile Include="Factories\PluginFactory.cs" />
+    <Compile Include="MainEngine\MainEngine.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginParser.cs" />
     <Compile Include="Program.cs" />

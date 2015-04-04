@@ -163,5 +163,16 @@ namespace SNMS_Server.Connectivity
             BringToFront();
             return new WebDriverElement(m_webDriver.SwitchTo().ActiveElement());
         }
+
+        public void Close()
+        {
+            if (m_webDriver == null)
+            {
+                return;
+            }
+
+            m_webDriver.Close();
+            m_webDriver = null;
+        }
     }
 }

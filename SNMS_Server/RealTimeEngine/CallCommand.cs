@@ -26,7 +26,7 @@ namespace SNMS_Server.RealTimeEngines
 
             string sErrorString = "";
 
-            configuration.RunSequence(m_sSequenceName, ref sErrorString); 
+            configuration.RunSequence(m_sSequenceName, ref sErrorString, null); 
 
             if (sErrorString == "")
             {
