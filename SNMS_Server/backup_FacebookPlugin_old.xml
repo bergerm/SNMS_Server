@@ -1,0 +1,225 @@
+﻿<Plugin>
+  <!-- Plugin Info -->
+  <PluginName>Facebook</PluginName>
+  
+  <PluginDescription>
+    This plugin is able to connect to facebook accounts, read and write private messages, read and write wall posts.
+  </PluginDescription>
+  
+  <PluginVersion>0.1.0</PluginVersion>
+  
+  <!-- Mandatory Variables! These are obligatory in EVERY plugin and must not be used by any command -->
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemResultString">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <!-- SystemReactionSequence is the variable used to select the required reaction for the validated trigger -->
+  <Variable name="SystemReactionSequence">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <!-- Constants for entire system -->
+  <Constant name="baseURL">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>http://www.facebook.com</ConstantValue>
+  </Constant>
+
+  <!-- Variables for entire system -->
+  <Variable name="userName">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="password">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkWall_tempWallItemCounter">
+    <VariableType>integer</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoXpath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Constant name="checkWall_tempWallItemMinutesAgoNOW">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>Just now</ConstantValue>
+  </Constant>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoMax">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_postMinuesAgo">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <!-- Set up sequence is always run on plugin start and can be called later -->
+  <Sequence name="setup">
+    <CatenateString>
+      <Destination>password</Destination>
+      <Source1><Variable>password</Variable></Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
+  </Sequence>
+
+  <!-- Login to Facebook -->
+  <Sequence name="login">
+    <Call>setup</Call>
+    
+    <GoTo>
+      <Constant>baseURL</Constant>
+    </GoTo>
+
+    <GetItem name="userNameField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>email</SearchValue>
+    </GetItem>
+
+    <GetItem name="passwordField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>pass</SearchValue>
+    </GetItem>
+
+    <Type>
+      <Destination>userNameField</Destination>
+      <String>
+        <Variable>userName</Variable>
+      </String>
+    </Type>
+
+    <Type>
+      <Destination>passwordField</Destination>
+      <String>
+        <Variable>password</Variable>
+      </String>
+    </Type>
+
+    <Call>main page</Call>
+  </Sequence>
+
+  <!-- Go to main page -->
+  <Sequence name="main page">
+    <GetItem name="mainPageButton">
+      <ParentElement></ParentElement>
+      <SearchType>xPath</SearchType>
+      <SearchValue>//h1/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>mainPageButton</Destination>
+    </Click>
+  </Sequence>
+
+  <!-- Check messages on wall -->
+  <Sequence name="checkWall">
+    <!-- Counter Set to 0 -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <String>1</String>
+    </SetVariable>
+
+    <Label>WALL ITEM LOOP</Label>
+    <!-- create xpath for required post -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </Source1>
+      <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
+    </CatenateString>
+
+    <GetItem name="checkWall_minutesAgoText">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </SearchValue>
+    </GetItem>
+    
+    <GetInnerTextFromItem>
+      <Source>checkWall_minutesAgoText</Source>
+      <Destination>checkWall_postMinuesAgo</Destination>
+    </GetInnerTextFromItem>
+
+    <Condition>
+      <True>JUST NOW</True>
+      <False>X MINUTES</False>
+    </Condition>
+    <CompareVariables>
+      <Source1>checkWall_postMinuesAgo</Source1>
+      <Source2>checkWall_tempWallItemMinutesAgoNOW</Source2>
+    </CompareVariables>
+
+    <Label>JUST NOW</Label>
+    <SetVariable>
+      <Destination>checkWall_postMinuesAgo</Destination>
+      <String>0</String>
+    </SetVariable>
+
+    <Label>X MINUTES</Label>
+    <Condition>
+      <True>FINISHED</True>
+      <False>CONTINUE</False>
+    </Condition>
+    <GreaterThan>
+      <Source1>
+        <Variable>checkWall_postMinuesAgo</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemMinutesAgoMax</Variable>
+      </Source2>
+    </GreaterThan>
+
+    <Label>CONTINUE</Label>
+    <GetItem name="checkWall_itemText">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>../../../../../../../../../..//p</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <GetInnerTextFromItem>
+      <Source>checkWall_postText</Source>
+      <Destination>checkWall_itemText</Destination>
+    </GetInnerTextFromItem>
+
+    <CheckTriggers>
+      <TriggerType>wallPost</TriggerType>
+      <Reaction>ReactToWallPost</Reaction>
+    </CheckTriggers>
+
+    <Jump>WALL ITEM LOOP</Jump>
+
+    <Label>FINISHED</Label>
+    <Sleep>0</Sleep>
+    
+  </Sequence>
+  
+  <!-- Check private messages -->
+  <Sequence name="checkPrivateMessages">
+    
+    
+  </Sequence>
+  
+</Plugin>
+

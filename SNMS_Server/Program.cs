@@ -15,6 +15,7 @@ using SNMS_Server.Configurations;
 using SNMS_Server.Connection;
 using SNMS_Server.Factories;
 using SNMS_Server.Engine;
+using SNMS_Server.Logging;
 
 namespace SNMS_Server
 {
@@ -29,13 +30,26 @@ namespace SNMS_Server
             connectionMessage.SetMessageType(ProtocolMessageType.PROTOCOL_MESSAGE_CONNECTION);
             connectionMessage.AddParameter("server");
 
-            TcpClient client = new TcpClient();
-            client.Connect(TCP_HOST, TCP_PORT);
+            TcpClient client = null;
+            NetworkStream stream = null;
 
-            NetworkStream stream = client.GetStream();
+            try
+            {
+                client = new TcpClient();
+                client.Connect(TCP_HOST, TCP_PORT);
+
+                stream = client.GetStream();
+            }
+            catch (Exception e)
+            {
+                Environment.Exit(1);
+            }
 
             ConnectionHandler.SendMessage(stream, connectionMessage);
             ProtocolMessage responseMessage = ConnectionHandler.GetMessage(stream);
+
+            Logger logger = Logger.Instance(stream);
+            logger.Log(Logger.LOG_TYPE_START, "Server Started");
 
             MainEngine mainEngine = new MainEngine();
             mainEngine.Start(stream);

@@ -13,6 +13,7 @@ using SNMS_Server.Plugins;
 using SNMS_Server.Configurations;
 using SNMS_Server.Factories;
 using SNMS_Server.Connection;
+using SNMS_Server.Logging;
 
 
 namespace SNMS_Server.Engine
@@ -41,6 +42,8 @@ namespace SNMS_Server.Engine
             
             RealTimeEngine rtEngine = new RealTimeEngine();
 
+            Logger logger = Logger.Instance();
+
             List<Plugin> listOfPlugins = PluginFactory.Build(PLUGIN_FOLDER_PATH);
             foreach (Plugin plugin in listOfPlugins)
             {
@@ -56,6 +59,7 @@ namespace SNMS_Server.Engine
                             configuration.RunSequence(seqName, ref sErrorString, null);
                             if (sErrorString != "")
                             {
+                                logger.Log(Logger.LOG_TYPE_ERROR_ON_SEQUENCE, sErrorString);
                                 return null;
                             }
                         }
@@ -76,6 +80,8 @@ namespace SNMS_Server.Engine
         void RunningThread(object netstream)
         {
             NetworkStream stream = (NetworkStream)netstream;
+
+            Logger logger = Logger.Instance();
 
             RealTimeEngine rtEngine = null;
             bool bUpdateRequired = false;
@@ -99,6 +105,7 @@ namespace SNMS_Server.Engine
                 if (rtEngine == null)
                 {
                     System.Console.WriteLine("Main Engine errror: Cannot create RealTime Engine!");
+                    logger.Log(Logger.LOG_TYPE_ERROR, "Main Engine errror: Cannot create RealTime Engine!");
                     Thread.Sleep(1000);
                     continue;
                 }
@@ -106,6 +113,7 @@ namespace SNMS_Server.Engine
                 ProtocolMessage serverUpdatedMessage = new ProtocolMessage();
                 serverUpdatedMessage.SetMessageType(ProtocolMessageType.PROTOCOL_MESSAGE_SERVER_UPDATED);
                 ConnectionHandler.SendMessage(stream, serverUpdatedMessage);
+                logger.Log(Logger.LOG_TYPE_SYSTEM_UPDATE, "System Updated");
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
 

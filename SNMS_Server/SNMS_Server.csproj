@@ -78,6 +78,7 @@
     <Compile Include="Factories\ConfigurationFactory.cs" />
     <Compile Include="Factories\PluginBuilder.cs" />
     <Compile Include="Factories\PluginFactory.cs" />
+    <Compile Include="Logger\Logger.cs" />
     <Compile Include="MainEngine\MainEngine.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginParser.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="RealTimeEngine\CallCommand.cs" />
     <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
     <Compile Include="RealTimeEngine\CheckElementVisibleWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\LogLinkCommand.cs" />
+    <Compile Include="RealTimeEngine\GetInnerLinkFromElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GetActiveElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\Sequences\SequenceTimer.cs" />
     <Compile Include="RealTimeEngine\VariableContainsCommand.cs" />
@@ -129,10 +132,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="backup_FacebookPlugin.xml">
+    <Content Include="backup_FacebookPlugin_old.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="FacebookPlugin.xml">
+    <Content Include="backup_FacebookPlugin.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WorkingPlugins\FacebookPlugin.xml">

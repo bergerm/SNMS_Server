@@ -15,7 +15,10 @@ namespace SNMS_Server.Factories
             PluginParser parser = new PluginParser();
 
             Plugin plugin = parser.ParsePlugin(sFilePath, ref sErrorString);
-            plugin.SetID(dwPluginID);
+            if (plugin != null)
+            {
+                plugin.SetID(dwPluginID);
+            }
 
             return plugin;
         }

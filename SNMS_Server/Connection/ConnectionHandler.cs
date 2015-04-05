@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
 
+using SNMS_Server.Logging;
+
 namespace SNMS_Server.Connection
 {
     abstract class ConnectionHandler
     {
-        private const int CONNECTION_TIMEOUT = 300000;
+        //private const int CONNECTION_TIMEOUT = 300000;
+        private const int CONNECTION_TIMEOUT = -1;
 
         public static ProtocolMessage GetMessage(Stream stream)
         {
@@ -39,6 +42,7 @@ namespace SNMS_Server.Connection
             }
             catch (Exception e)
             {
+                Environment.Exit(1);
                 return null;
             }
         }

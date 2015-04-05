@@ -28,6 +28,7 @@ namespace SNMS_Server.RealTimeEngines
         void RunSequence(string sSequenceName, Mutex mutex)
         {
             m_mutex.WaitOne();
+            m_sErrorString = "";
             m_configuration.RunSequence(sSequenceName, ref m_sErrorString, mutex);
             m_mutex.ReleaseMutex();
         }

@@ -347,6 +347,23 @@ namespace SNMS_Server.Plugins
                     sequence.AddCommand(getIntFromElementCommand);
                     break;
 
+                case "GetLinkFromWebItem":
+                    string sGetLinkSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                    if (plugin.WebElementExists(sGetLinkSource) == false)
+                    {
+                        errorString = "Invalid GetLinkFromWebItem element";
+                        return false;
+                    }
+                    string sGetLinkDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                    if (plugin.GetVariable(sGetLinkDest) == null)
+                    {
+                        errorString = "Invalid GetLinkFromWebItem Destination";
+                        return false;
+                    }
+                    GetInnerLinkFromElementWebDriverCommand getLinkFromElementCommand = new GetInnerLinkFromElementWebDriverCommand(sGetLinkSource, sGetLinkDest);
+                    sequence.AddCommand(getLinkFromElementCommand);
+                    break;
+
                 case "GreaterThan":
                     XmlNode greaterThanSource1Node = commandNode.SelectSingleNode("Source1");
                     string sGreaterThanSource1 = "";
@@ -422,6 +439,52 @@ namespace SNMS_Server.Plugins
                     string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
                     CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sVariableName, sReaction);
                     sequence.AddCommand(checkTriggerCommand, isConditionalNode);
+                    break;
+
+                case "LogLink":
+                    XmlNode linkMessageSource = commandNode.SelectSingleNode("Message");
+                    bool bIsLinkMessageSourceVariable = false;
+                    string sLinkMessageSource = "";
+                    if (linkMessageSource.HasChildNodes && linkMessageSource.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sLinkMessageSource = linkMessageSource.ChildNodes[0].InnerText.ToLower();
+                        bIsLinkMessageSourceVariable = true;
+                        if (plugin.GetVariable(sLinkMessageSource) == null)
+                        {
+                            errorString = "Invalid LogLink Message";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sLinkMessageSource = linkMessageSource.InnerText;
+                        bIsLinkMessageSourceVariable = false;
+                    }
+
+                    XmlNode linkSource = commandNode.SelectSingleNode("Link");
+                    bool bIsLinkSourceVariable = false;
+                    string sLinkSource = "";
+                    if (linkSource.HasChildNodes && linkSource.ChildNodes[0].NodeType != XmlNodeType.Text)
+                    {
+                        sLinkSource = linkSource.ChildNodes[0].InnerText.ToLower();
+                        bIsLinkSourceVariable = true;
+                        if (plugin.GetVariable(sLinkSource) == null)
+                        {
+                            errorString = "Invalid LogLink Message";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        sLinkSource = linkMessageSource.InnerText;
+                        bIsLinkSourceVariable = false;
+                    }
+
+                    LogLinkCommand logLinkCommand = new LogLinkCommand( sLinkMessageSource,
+                                                                        bIsLinkMessageSourceVariable,
+                                                                        sLinkSource,
+                                                                        bIsLinkSourceVariable);
+                    sequence.AddCommand(logLinkCommand);
                     break;
 
                 default:
@@ -507,7 +570,7 @@ namespace SNMS_Server.Plugins
                 Variable variable;
                 string varName = variableNode.Attributes["name"].Value.ToLower();
                 string varType = variableNode.SelectSingleNode("ConstantType").InnerText.ToLower();
-                string varValue = variableNode.SelectSingleNode("ConstantValue").InnerText.ToLower();
+                string varValue = variableNode.SelectSingleNode("ConstantValue").InnerText;
 
                 if (varName == "" || varType == "" || varValue == "")
                 {

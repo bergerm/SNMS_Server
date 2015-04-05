@@ -10,6 +10,7 @@ using SNMS_Server.RealTimeEngines.Sequences;
 using SNMS_Server.Configurations;
 using SNMS_Server.Variables;
 using SNMS_Server.Triggers;
+using SNMS_Server.Logging;
 
 namespace SNMS_Server.RealTimeEngines
 {
@@ -29,6 +30,8 @@ namespace SNMS_Server.RealTimeEngines
 
         override protected bool CommandLogic()
         {
+            Logger logger = Logger.Instance();
+
             string sErrorString = "";
             Configuration configuration = m_sequence.GetConfiguration();
             List<Trigger> triggers = configuration.GetTriggers(m_sTriggersType);
@@ -48,25 +51,30 @@ namespace SNMS_Server.RealTimeEngines
                 bool result = trigger.Validate(sourceVariable.GetString());
                 if (result)
                 {
+                    string sValidationLog = "Trigger " + trigger.GetID() + " was validated";
+                    logger.Log(Logger.LOG_TYPE_TRIGGER_VALIDATION, sValidationLog);
+                    
                     Sequence reaction = trigger.GetReaction();
+                    if (reaction == null)
+                    {
+                        return true;
+                    }
                     string sReactionValue = trigger.GetReactionValue();
+
+                    string sReactionLog = "Reaction " + reaction.GetName() + " will be executed as a result of the trigger validation";
+                    logger.Log(Logger.LOG_TYPE_REACTION, sReactionLog);
 
                     m_variableDictionary.SetVariable("SystemReactionValue".ToLower(), new StringVariable(sReactionValue));
                     configuration.RunSequence(reaction, ref sErrorString, null);
 
                     if (sErrorString != "")
                     {
-                        System.Console.WriteLine("The above is an error on CheckTriggerCommands for triggerType " + m_sTriggersType + " in configuration " + configuration.GetName() + ".");
+                        string sErrorMessage = "The previous is an error on CheckTriggerCommands for triggerType " + m_sTriggersType + " in configuration " + configuration.GetName() + ".";
+                        logger.Log(Logger.LOG_TYPE_ERROR_ON_SEQUENCE, sErrorMessage);
+                        System.Console.WriteLine(sErrorMessage);
                     }
                 }
             }
-            /*StringVariable responseVariable = new StringVariable("I am responding!");
-            m_variableDictionary.SetVariable("respondToPost_responseString".ToLower(), responseVariable);
-
-            string sErrorString = "";
-            m_sequence.GetConfiguration().RunSequence("reactToWallPost", ref sErrorString);
-
-            System.Console.WriteLine(sErrorString);*/
 
             return true;
         }

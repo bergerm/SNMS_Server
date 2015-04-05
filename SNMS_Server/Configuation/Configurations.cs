@@ -12,6 +12,7 @@ using SNMS_Server.Connectivity;
 using SNMS_Server.RealTimeEngines.Sequences;
 using SNMS_Server.Connection;
 using SNMS_Server.Triggers;
+using SNMS_Server.Logging;
 
 namespace SNMS_Server.Configurations
 {
@@ -21,8 +22,6 @@ namespace SNMS_Server.Configurations
         Account m_account;
         string m_sName;
         bool m_bIsEnabled;
-
-        //Plugin m_plugin;
 
         SequenceDictionary m_sequenceDictionary;
         VariableDictionary m_variableDictionary;
@@ -46,20 +45,16 @@ namespace SNMS_Server.Configurations
                                 string sConfigurationName,
                                 Account account,
                                 bool isEnabled)
-                                //Plugin plugin )
         {
             m_dwID = dwConfigurationId;
             m_sName = sConfigurationName;
-            //m_plugin = plugin;
             m_account = account;
             m_bIsEnabled = isEnabled;
 
             m_sequenceDictionary = account.GetPlugin().CloneSequenceDictionary();
 
-            //m_variableDictionary = plugin.CloneVariableDictionary();
             m_variableDictionary = account.GetPlugin().CloneVariableDictionary();
 
-            //m_webElementDictionary = plugin.CloneWebElementsDictionary();
             m_webElementDictionary = account.GetPlugin().CloneWebElementsDictionary();
 
             m_triggerGroupDictionary = new TriggerGroupDictionary();
@@ -94,7 +89,10 @@ namespace SNMS_Server.Configurations
 
             if (sErrorString != "")
             {
-                System.Console.WriteLine("Error on Sequence " + sequence.GetName() + " on plugin " + m_account.GetPlugin().GetPluginName() + ":");
+                string sErrorMessage = "Error on Sequence " + sequence.GetName() + " on plugin " + m_account.GetPlugin().GetPluginName() + ": ";
+                Logger logger = Logger.Instance();
+                logger.Log(Logger.LOG_TYPE_ERROR_ON_SEQUENCE, sErrorMessage + sErrorString);
+                System.Console.WriteLine(sErrorMessage);
                 System.Console.WriteLine(sErrorString);
             }
 
@@ -111,8 +109,6 @@ namespace SNMS_Server.Configurations
                 return;
             }
 
-            //Sequence sequence = m_plugin.CloneSequence(sSequenceName);
-            //Sequence sequence = m_account.GetPlugin().CloneSequence(sSequenceName);
             Sequence sequence = m_sequenceDictionary.GetSequence(sSequenceName);
             if (sequence == null)
             {
