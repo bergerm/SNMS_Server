@@ -27,7 +27,8 @@ namespace SNMS_Server.Engine
         // 180000 ms equals 3 minutes.
         static int UPDATING_INTERVAL = 180000;
 
-        const string PLUGIN_FOLDER_PATH = "..\\..\\WorkingPlugins\\";
+        //const string PLUGIN_FOLDER_PATH = "..\\..\\WorkingPlugins\\";
+        const string PLUGIN_FOLDER_PATH = "C:\\WorkingPlugins\\";
 
         public MainEngine()
         {
@@ -44,7 +45,13 @@ namespace SNMS_Server.Engine
 
             Logger logger = Logger.Instance();
 
-            List<Plugin> listOfPlugins = PluginFactory.Build(PLUGIN_FOLDER_PATH);
+            List<int> pluginIdsList = null;
+            List<string> pluginPathsList = null;
+            if (!PluginFactory.DownloadPlugins(stream, PLUGIN_FOLDER_PATH, ref pluginIdsList, ref pluginPathsList))
+            {
+                return null;
+            }
+            List<Plugin> listOfPlugins = PluginFactory.Build(PLUGIN_FOLDER_PATH, pluginIdsList, pluginPathsList);
             foreach (Plugin plugin in listOfPlugins)
             {
                 List<Account> listOfAccounts = AccountFactory.Build(plugin, stream);

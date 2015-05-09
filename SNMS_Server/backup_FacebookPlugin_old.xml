@@ -18,6 +18,11 @@
   <Variable name="SystemReactionSequence">
     <VariableType>string</VariableType>
   </Variable>
+
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemReactionValue">
+    <VariableType>string</VariableType>
+  </Variable>
   
   <!-- Constants for entire system -->
   <Constant name="baseURL">
@@ -52,6 +57,18 @@
   </Variable>
 
   <Variable name="checkWall_postMinuesAgo">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_postText">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_commentButtonXPath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_responseString">
     <VariableType>string</VariableType>
   </Variable>
 
@@ -116,6 +133,18 @@
 
   <!-- Check messages on wall -->
   <Sequence name="checkWall">
+    <GetItem name="checkWall_wallIcon">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//li/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>checkWall_wallIcon</Destination>
+    </Click>
+
+    <Sleep>1000</Sleep>
+    
     <!-- Counter Set to 0 -->
     <SetVariable>
       <Destination>checkWall_tempWallItemCounter</Destination>
@@ -147,6 +176,11 @@
       <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
     </CatenateString>
 
+    <!-- if no item found, finish sequence -->
+    <Condition>
+      <True>ITEM FOUND</True>
+      <False>FINISHED</False>
+    </Condition>
     <GetItem name="checkWall_minutesAgoText">
       <ParentElement></ParentElement>
       <SearchType>XPath</SearchType>
@@ -154,27 +188,46 @@
         <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
       </SearchValue>
     </GetItem>
+
+    <!-- item was found, continue sequence -->
+    <Label>ITEM FOUND</Label>
     
-    <GetInnerTextFromItem>
+    <GetTextFromWebItem>
       <Source>checkWall_minutesAgoText</Source>
       <Destination>checkWall_postMinuesAgo</Destination>
-    </GetInnerTextFromItem>
+    </GetTextFromWebItem>
 
+    <!-- If time string is "Just Now" item should be checked -->
     <Condition>
       <True>JUST NOW</True>
-      <False>X MINUTES</False>
+      <False>MINUTES OR HOURS</False>
     </Condition>
     <CompareVariables>
-      <Source1>checkWall_postMinuesAgo</Source1>
-      <Source2>checkWall_tempWallItemMinutesAgoNOW</Source2>
+      <Variable1>checkWall_postMinuesAgo</Variable1>
+      <Variable2>checkWall_tempWallItemMinutesAgoNOW</Variable2>
     </CompareVariables>
 
+    <!-- Set minutes ago to 0 and jump to trigger checking -->
     <Label>JUST NOW</Label>
     <SetVariable>
       <Destination>checkWall_postMinuesAgo</Destination>
       <String>0</String>
     </SetVariable>
 
+    <Jump>X MINUTES</Jump>
+
+    <!-- Check if the item was posted minutes ago or hours, days, etc... -->
+    <Label>MINUTES OR HOURS</Label>
+    <Condition>
+      <True>X MINUTES</True>
+      <False>FINISHED</False>
+    </Condition>
+    <VariableContains>
+      <VariableName>checkWall_postMinuesAgo</VariableName>
+      <Source>min</Source>
+    </VariableContains>
+
+    <!-- Check if was posted within the last X minutes (configurable by checkWall_tempWallItemMinutesAgoMax) -->
     <Label>X MINUTES</Label>
     <Condition>
       <True>FINISHED</True>
@@ -189,37 +242,132 @@
       </Source2>
     </GreaterThan>
 
+    <!-- Read the message -->
     <Label>CONTINUE</Label>
     <GetItem name="checkWall_itemText">
+      <ParentElement>checkWall_minutesAgoText</ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>../../../../../../../../../..//p</SearchValue>
+    </GetItem>
+
+    <GetTextFromWebItem>
+      <Source>checkWall_itemText</Source>
+      <Destination>checkWall_postText</Destination>
+    </GetTextFromWebItem>
+
+    <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
+    <CheckTriggers>
+      <TriggerType>wallPost</TriggerType>
+      <VariableName>checkWall_itemText</VariableName>
+      <Reaction>reactToWallPost</Reaction>
+    </CheckTriggers>
+
+    <!-- Prepare for next post and Jump to WALL ITEM LOOP -->
+    <IncreaseVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <Quantity>1</Quantity>
+    </IncreaseVariable>
+    
+    <Jump>WALL ITEM LOOP</Jump>
+
+    <!-- finished sequence -->
+    <Label>FINISHED</Label>
+    <Sleep>0</Sleep>
+
+  </Sequence>
+
+  <!-- React to a wall post -->
+  <Sequence name="reactToWallPost">
+    <SetVariable>
+      <Destination>respondToPost_responseString</Destination>
+      <String></String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>
+        <Variable>SystemReactionValue</Variable>
+      </Source2>
+    </CatenateString>
+
+    <SetVariable>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>]/div/div[5]/form/div/div[2]/div/div/span[2]/a/span</Source2>
+    </CatenateString>
+    
+    <GetItem name="reactToWallPost_commentButton">
       <ParentElement></ParentElement>
       <SearchType>XPath</SearchType>
       <SearchValue>
-        <Variable>../../../../../../../../../..//p</Variable>
+        <Variable>respondToPost_commentButtonXPath</Variable>
       </SearchValue>
     </GetItem>
 
-    <GetInnerTextFromItem>
-      <Source>checkWall_postText</Source>
-      <Destination>checkWall_itemText</Destination>
-    </GetInnerTextFromItem>
+    <Sleep>300</Sleep>
+    
+    <Click>
+      <Destination>reactToWallPost_commentButton</Destination>
+    </Click>
 
-    <CheckTriggers>
-      <TriggerType>wallPost</TriggerType>
-      <Reaction>ReactToWallPost</Reaction>
-    </CheckTriggers>
+    <Sleep>1000</Sleep>
 
-    <Jump>WALL ITEM LOOP</Jump>
+    <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
+    
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
 
-    <Label>FINISHED</Label>
-    <Sleep>0</Sleep>
+    <Type>
+      <Destination>reactToWallPost_commentTextArea</Destination>
+      <String>
+        <Variable>respondToPost_responseString</Variable>
+      </String>
+    </Type>
     
   </Sequence>
-  
+
   <!-- Check private messages -->
   <Sequence name="checkPrivateMessages">
-    
-    
+
+
   </Sequence>
+  
+  <!-- Sequences that run on start -->
+  <Start>
+    <Sequence>setup</Sequence>
+    <Sequence>login</Sequence>
+  </Start>
+  
+<!-- Timers -->
+  <Timer>
+    <SequenceName>checkWallMessage</SequenceName>
+    <Period>3</Period>
+  </Timer>
   
 </Plugin>
 

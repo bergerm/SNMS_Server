@@ -72,6 +72,14 @@
     <VariableType>string</VariableType>
   </Variable>
 
+  <Variable name="respondToPost_wallPostXPath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_wallPostLink">
+    <VariableType>string</VariableType>
+  </Variable>
+
   <!-- Set up sequence is always run on plugin start and can be called later -->
   <Sequence name="setup">
     <CatenateString>
@@ -258,7 +266,7 @@
     <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
     <CheckTriggers>
       <TriggerType>wallPost</TriggerType>
-      <VariableName>checkWall_itemText</VariableName>
+      <VariableName>checkWall_postText</VariableName>
       <Reaction>reactToWallPost</Reaction>
     </CheckTriggers>
 
@@ -274,7 +282,7 @@
     <Label>FINISHED</Label>
     <Sleep>0</Sleep>
 
-  </Sequence>
+  </Sequence> 
 
   <!-- React to a wall post -->
   <Sequence name="reactToWallPost">
@@ -313,9 +321,10 @@
       <Source1>
         <Variable>respondToPost_commentButtonXPath</Variable>
       </Source1>
-      <Source2>]/div/div[5]/form/div/div[2]/div/div/span[2]/a/span</Source2>
+      <Source2>]/div/div[5]/form/div/div/span[2]/a/span</Source2>
     </CatenateString>
-    
+
+    <Label>PRESS COMMENT BUTTON</Label>
     <GetItem name="reactToWallPost_commentButton">
       <ParentElement></ParentElement>
       <SearchType>XPath</SearchType>
@@ -324,7 +333,7 @@
       </SearchValue>
     </GetItem>
 
-    <Sleep>300</Sleep>
+    <Sleep>500</Sleep>
     
     <Click>
       <Destination>reactToWallPost_commentButton</Destination>
@@ -333,7 +342,16 @@
     <Sleep>1000</Sleep>
 
     <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
-    
+
+    <Condition>
+      <True>WRITE RESPONSE</True>
+      <False>PRESS COMMENT BUTTON</False>
+    </Condition>
+    <CheckItemVisible>
+      <ItemName>reactToWallPost_commentTextArea</ItemName>
+    </CheckItemVisible>
+
+    <Label>WRITE RESPONSE</Label>
     <CatenateString>
       <Destination>respondToPost_responseString</Destination>
       <Source1>
@@ -348,6 +366,50 @@
         <Variable>respondToPost_responseString</Variable>
       </String>
     </Type>
+
+    <Label>LOG LINK</Label>
+    <SetVariable>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </Source1>
+      <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a</Source2>
+    </CatenateString>
+
+    <GetItem name="respondToPost_wallPost">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <GetLinkFromWebItem>
+      <Source>respondToPost_wallPost</Source>
+      <Destination>respondToPost_wallPostLink</Destination>
+    </GetLinkFromWebItem>
+
+    <LogLink>
+      <Message>The following is a link to a wall post that was automatically responded.</Message>
+      <Link>
+        <Variable>respondToPost_wallPostLink</Variable>
+      </Link>
+    </LogLink>
     
   </Sequence>
 
@@ -365,8 +427,8 @@
   
 <!-- Timers -->
   <Timer>
-    <SequenceName>checkWallMessage</SequenceName>
-    <Period>3</Period>
+    <SequenceName>checkWall</SequenceName>
+    <Period>1</Period>
   </Timer>
   
 </Plugin>
