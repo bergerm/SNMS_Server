@@ -59,6 +59,7 @@ namespace SNMS_Server.Configurations
 
             m_triggerGroupDictionary = new TriggerGroupDictionary();
 
+            System.Console.WriteLine("Starting web driver for configuration " + m_sName + " in plugin " + m_account.GetPlugin().GetPluginName());
             m_webDriver = new WebDriver();
         }
 

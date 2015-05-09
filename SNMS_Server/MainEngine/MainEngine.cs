@@ -20,7 +20,7 @@ namespace SNMS_Server.Engine
 {
     class MainEngine
     {
-        RealTimeEngine m_realTimeEngine;
+        //RealTimeEngine m_realTimeEngine;
         Thread m_runningThread;
         Mutex m_mutex;
 
@@ -31,7 +31,7 @@ namespace SNMS_Server.Engine
 
         public MainEngine()
         {
-            m_realTimeEngine = null;
+            //m_realTimeEngine = null;
             m_runningThread = null;
             m_mutex = new Mutex();
         }
@@ -86,6 +86,8 @@ namespace SNMS_Server.Engine
             RealTimeEngine rtEngine = null;
             bool bUpdateRequired = false;
 
+            System.Console.WriteLine("Launching Main Engine");
+
             while (true)
             {
                 m_mutex.WaitOne();
@@ -97,6 +99,7 @@ namespace SNMS_Server.Engine
                     rtEngine = null;
                 }
 
+                System.Console.WriteLine("Updating Main Engine");
                 rtEngine = CreateNewRealTimeEngine(stream);
                 m_mutex.ReleaseMutex();
 
@@ -109,6 +112,8 @@ namespace SNMS_Server.Engine
                     Thread.Sleep(1000);
                     continue;
                 }
+
+                System.Console.WriteLine("Main Engine Updated");
 
                 ProtocolMessage serverUpdatedMessage = new ProtocolMessage();
                 serverUpdatedMessage.SetMessageType(ProtocolMessageType.PROTOCOL_MESSAGE_SERVER_UPDATED);

@@ -116,8 +116,11 @@ namespace SNMS_Server.RealTimeEngines.Sequences
 
         public void Run(ref string sErrorString)
         {
+            string sMessage = "Running Sequence " + m_sSequenceName + " for configuration " + m_configuration.GetName() + " in plugin " + m_configuration.GetAccount().GetPlugin().GetPluginName();
+            System.Console.WriteLine(sMessage);
             if (!m_bIsEnabled)
             {
+                System.Console.WriteLine("Sequence is disabled");
                 return;
             }
 

@@ -161,7 +161,7 @@ namespace SNMS_Server.Plugins
                                                                                                             bGetItemSearchValueVariable);
                         sequence.AddCommand(getItemByClass, isConditionalNode);
                     }
-                    else if (sGetItemSearchType == "class")
+                    else if (sGetItemSearchType == "css")
                     {
                         GetElementByCssSelectorWebDriverCommand getItemByCss = new GetElementByCssSelectorWebDriverCommand(sGetItemParentElement,
                                                                                                             sGetItemName,
