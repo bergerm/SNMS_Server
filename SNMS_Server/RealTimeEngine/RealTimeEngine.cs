@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 using SNMS_Server.Configurations;
+using SNMS_Server.Connection;
 using System.Threading;
 
 namespace SNMS_Server.RealTimeEngines
@@ -14,15 +16,17 @@ namespace SNMS_Server.RealTimeEngines
         Configuration m_configuration;
         List<Timer> m_timerList;
         Mutex m_mutex;
+        NetworkStream m_stream;
 
         string m_sErrorString;
 
-        public ConfigurationScheduler(Configuration configuration)
+        public ConfigurationScheduler(Configuration configuration, NetworkStream stream)
         {
             m_configuration = configuration;
             m_sErrorString = "";
             m_timerList = new List<Timer>();
             m_mutex = new Mutex();
+            m_stream = stream;
         }
 
         void RunSequence(string sSequenceName, Mutex mutex)
@@ -33,9 +37,29 @@ namespace SNMS_Server.RealTimeEngines
             m_mutex.ReleaseMutex();
         }
 
+        void RunScheduledSequence(string sSequenceName, Mutex mutex)
+        {
+            ProtocolMessage configurationStatusMessage = new ProtocolMessage();
+            configurationStatusMessage.SetMessageType(ProtocolMessageType.PROTOCOL_MESSAGE_SAVE_CONFIGURATION_STATUS_MESSAGE);
+            configurationStatusMessage.AddParameter(m_configuration.GetID());
+
+            RunSequence(sSequenceName, mutex);
+
+            if( m_sErrorString == "" )
+            {
+                configurationStatusMessage.AddParameter("Running");
+            }
+            else
+            {
+                configurationStatusMessage.AddParameter("ERROR");
+            }
+
+            ConnectionHandler.SendMessage(m_stream, configurationStatusMessage);
+        }
+
         public void ScheduleSequence(string sSequenceName, int dwInterval, Mutex mutex)
         {
-            Timer timer = new Timer(e => RunSequence(sSequenceName, mutex),
+            Timer timer = new Timer(e => RunScheduledSequence(sSequenceName, mutex),
                                         null,
                                         TimeSpan.Zero,
                                         TimeSpan.FromMinutes(dwInterval));
@@ -68,9 +92,9 @@ namespace SNMS_Server.RealTimeEngines
             m_configurationSchedulerDictionary = new Dictionary<string, ConfigurationScheduler>();
         }
 
-        public void AddConfiguration(string sConfigurationName, Configuration configuration)
+        public void AddConfiguration(NetworkStream stream, string sConfigurationName, Configuration configuration)
         {
-            ConfigurationScheduler scheduler = new ConfigurationScheduler(configuration);
+            ConfigurationScheduler scheduler = new ConfigurationScheduler(configuration, stream);
             m_configurationSchedulerDictionary[sConfigurationName] = scheduler;
         }
 

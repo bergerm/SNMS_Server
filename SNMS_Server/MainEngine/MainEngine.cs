@@ -60,6 +60,10 @@ namespace SNMS_Server.Engine
                     List<Configuration> listOfConfigurations = ConfigurationFactory.Build(account, stream);
                     foreach (Configuration configuration in listOfConfigurations)
                     {
+                        ProtocolMessage configurationStatusMessage = new ProtocolMessage();
+                        configurationStatusMessage.SetMessageType(ProtocolMessageType.PROTOCOL_MESSAGE_SAVE_CONFIGURATION_STATUS_MESSAGE);
+                        configurationStatusMessage.AddParameter(configuration.GetID());
+
                         List<string> sStartupSequences = plugin.GetStartupSequences();
                         foreach (string seqName in sStartupSequences)
                         {
@@ -67,16 +71,21 @@ namespace SNMS_Server.Engine
                             if (sErrorString != "")
                             {
                                 logger.Log(Logger.LOG_TYPE_ERROR_ON_SEQUENCE, sErrorString);
+                                configurationStatusMessage.AddParameter("ERROR");
+                                ConnectionHandler.SendMessage(stream, configurationStatusMessage);
                                 return null;
                             }
                         }
 
-                        rtEngine.AddConfiguration(configuration.GetName(), configuration);
+                        rtEngine.AddConfiguration(stream, configuration.GetName(), configuration);
                         List<SequenceTimer> timers = plugin.GetTimers();
                         foreach (SequenceTimer timer in timers)
                         {
                             rtEngine.SetSchedule(configuration.GetName(), timer.GetSequenceName(), timer.GetPeriod(), m_mutex);
                         }
+
+                        configurationStatusMessage.AddParameter("Running");
+                        ConnectionHandler.SendMessage(stream, configurationStatusMessage);
                     }
                 }
             }

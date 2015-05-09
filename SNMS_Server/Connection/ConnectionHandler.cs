@@ -42,6 +42,7 @@ namespace SNMS_Server.Connection
             }
             catch (Exception e)
             {
+                System.Console.WriteLine("Connection Error. Program will exit now.");
                 Environment.Exit(1);
                 return null;
             }
@@ -49,13 +50,22 @@ namespace SNMS_Server.Connection
 
         public static void SendMessage(Stream stream, ProtocolMessage message)
         {
-            byte[] response = Protocol.CraftMessage(message);
-            byte[] responseSize = BitConverter.GetBytes(response.Length);
-            // Send message size
-            stream.Write(responseSize, 0, 4);
-            // Send message
-            stream.Write(response, 0, response.Length);
-            stream.Flush();
+            try
+            {
+                byte[] response = Protocol.CraftMessage(message);
+                byte[] responseSize = BitConverter.GetBytes(response.Length);
+                // Send message size
+                stream.Write(responseSize, 0, 4);
+                // Send message
+                stream.Write(response, 0, response.Length);
+                stream.Flush();
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine("Connection Error. Program will exit now.");
+                Environment.Exit(1);
+                return;
+            }
         }
     }
 }
