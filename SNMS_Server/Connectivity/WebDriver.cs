@@ -164,6 +164,21 @@ namespace SNMS_Server.Connectivity
             return new WebDriverElement(m_webDriver.SwitchTo().ActiveElement());
         }
 
+        public int CountElements(WebDriverElement parentElement, string xpath)
+        {
+            int count = 0;
+            if (parentElement != null)
+            {
+                count = parentElement.GetIWebElement().FindElements(By.XPath(xpath)).Count;
+            }
+            else
+            {
+                count = m_webDriver.FindElements(By.XPath(xpath)).Count;
+            }
+
+            return count;
+        }
+
         public void Close()
         {
             if (m_webDriver == null)

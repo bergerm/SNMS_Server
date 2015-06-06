@@ -94,7 +94,7 @@ namespace SNMS_Server.Factories
                 else
                 {
                     string fileName = Path.GetFileName(filePath);
-                    sErrorString = "Error while building PLugin '" + fileName + "' : " + sErrorString;
+                    sErrorString = "Error while building PLugin " + fileName + ": " + sErrorString;
                     logger.Log(Logger.LOG_TYPE_ERROR, sErrorString);
                 }
 

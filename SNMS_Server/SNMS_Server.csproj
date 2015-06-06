@@ -90,6 +90,7 @@
     <Compile Include="RealTimeEngine\CallCommand.cs" />
     <Compile Include="RealTimeEngine\CheckTriggersCommand.cs" />
     <Compile Include="RealTimeEngine\CheckElementVisibleWebDriverCommand.cs" />
+    <Compile Include="RealTimeEngine\CountElementsWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\LogLinkCommand.cs" />
     <Compile Include="RealTimeEngine\GetInnerLinkFromElementWebDriverCommand.cs" />
     <Compile Include="RealTimeEngine\GetActiveElementWebDriverCommand.cs" />

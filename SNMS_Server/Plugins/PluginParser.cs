@@ -35,461 +35,477 @@ namespace SNMS_Server.Plugins
             string sCommandSource2;
             bool bIsCommandSource2Variable;
 
-            switch (sCommandName)
+
+            try
             {
-                case "CatenateString":
-                    sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sCommandDestination) == null)
-                    {
-                        errorString = "Invalid Catenate String Destination";
-                        return false;
-                    }
-
-                    commandSource1 = commandNode.SelectSingleNode("Source1");
-                    if (commandSource1.HasChildNodes && commandSource1.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sCommandSource1 = commandSource1.ChildNodes[0].InnerText.ToLower();
-                        bIsCommandSource1Variable = true;
-                        if (plugin.GetVariable(sCommandSource1) == null)
+                switch (sCommandName)
+                {
+                    case "CatenateString":
+                        sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sCommandDestination) == null)
                         {
-                            errorString = "Invalid Catenate String Source1";
+                            errorString = "Invalid Catenate String Destination";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sCommandSource1 = commandSource1.InnerText;
-                        bIsCommandSource1Variable = false;
-                    }
 
-                    commandSource2 = commandNode.SelectSingleNode("Source2");
-                    if (commandSource2.HasChildNodes && commandSource2.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sCommandSource2 = commandSource2.ChildNodes[0].InnerText.ToLower();
-                        bIsCommandSource2Variable = true;
-                        if (plugin.GetVariable(sCommandSource2) == null)
+                        commandSource1 = commandNode.SelectSingleNode("Source1");
+                        if (commandSource1.HasChildNodes && commandSource1.ChildNodes[0].NodeType != XmlNodeType.Text)
                         {
-                            errorString = "Invalid Catenate String Source2";
-                            return false;
+                            sCommandSource1 = commandSource1.ChildNodes[0].InnerText.ToLower();
+                            bIsCommandSource1Variable = true;
+                            if (plugin.GetVariable(sCommandSource1) == null)
+                            {
+                                errorString = "Invalid Catenate String Source1";
+                                return false;
+                            }
                         }
-                    }
-                    else
-                    {
-                        sCommandSource2 = commandSource2.InnerText;
-                        bIsCommandSource2Variable = false;
-                    }
+                        else
+                        {
+                            sCommandSource1 = commandSource1.InnerText;
+                            bIsCommandSource1Variable = false;
+                        }
 
-                    CatenateStringCommand catenateCommand = new CatenateStringCommand(sCommandDestination,
-                                                                                sCommandSource1,
-                                                                                bIsCommandSource1Variable,
-                                                                                sCommandSource2,
-                                                                                bIsCommandSource2Variable);
-                    sequence.AddCommand(catenateCommand);
-                    break;
+                        commandSource2 = commandNode.SelectSingleNode("Source2");
+                        if (commandSource2.HasChildNodes && commandSource2.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sCommandSource2 = commandSource2.ChildNodes[0].InnerText.ToLower();
+                            bIsCommandSource2Variable = true;
+                            if (plugin.GetVariable(sCommandSource2) == null)
+                            {
+                                errorString = "Invalid Catenate String Source2";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sCommandSource2 = commandSource2.InnerText;
+                            bIsCommandSource2Variable = false;
+                        }
 
-                case "Click":
-                    sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText;
-                    ClickElementWebDriverCommand clickCommand = new ClickElementWebDriverCommand(sCommandDestination);
-                    sequence.AddCommand(clickCommand);
-                    break;
+                        CatenateStringCommand catenateCommand = new CatenateStringCommand(sCommandDestination,
+                                                                                    sCommandSource1,
+                                                                                    bIsCommandSource1Variable,
+                                                                                    sCommandSource2,
+                                                                                    bIsCommandSource2Variable);
+                        sequence.AddCommand(catenateCommand);
+                        break;
 
-                case "GetItem":
-                    string sGetItemName = commandNode.Attributes["name"].Value.ToLower();
-                    string sGetItemParentElement = commandNode.SelectSingleNode("ParentElement").InnerText.ToLower();
-                    string sGetItemSearchType = commandNode.SelectSingleNode("SearchType").InnerText.ToLower();
-                    //string sGetItemSearchValue = commandNode.SelectSingleNode("SearchValue").InnerText;
-                    string sGetItemSearchValue = "";
-                    bool bGetItemSearchValueVariable = false;
+                    case "Click":
+                        sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText;
+                        ClickElementWebDriverCommand clickCommand = new ClickElementWebDriverCommand(sCommandDestination);
+                        sequence.AddCommand(clickCommand);
+                        break;
 
-                    XmlNode getItemSearchValueNode = commandNode.SelectSingleNode("SearchValue");
-                    if (getItemSearchValueNode == null)
-                    {
-                        errorString = "Invalid Get Item Search Value";
-                        return false;
-                    }
+                    case "GetItem":
+                        string sGetItemName = commandNode.Attributes["name"].Value.ToLower();
+                        string sGetItemParentElement = commandNode.SelectSingleNode("ParentElement").InnerText.ToLower();
+                        string sGetItemSearchType = commandNode.SelectSingleNode("SearchType").InnerText.ToLower();
+                        //string sGetItemSearchValue = commandNode.SelectSingleNode("SearchValue").InnerText;
+                        string sGetItemSearchValue = "";
+                        bool bGetItemSearchValueVariable = false;
 
-                    if (getItemSearchValueNode.HasChildNodes && getItemSearchValueNode.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sGetItemSearchValue = getItemSearchValueNode.ChildNodes[0].InnerText.ToLower();
-                        bGetItemSearchValueVariable = true;
-                        if (plugin.GetVariable(sGetItemSearchValue) == null)
+                        XmlNode getItemSearchValueNode = commandNode.SelectSingleNode("SearchValue");
+                        if (getItemSearchValueNode == null)
                         {
                             errorString = "Invalid Get Item Search Value";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sGetItemSearchValue = getItemSearchValueNode.InnerText;
-                        bIsCommandSource2Variable = false;
-                    }
 
-
-                    if (sGetItemName == "" || sGetItemSearchType == "" || sGetItemSearchValue == "")
-                    {
-                        errorString = "Invalid Get Item name \"" + sGetItemName;
-                        return false;
-                    }
-
-                    if (sGetItemParentElement != "" && plugin.WebElementExists(sGetItemParentElement) == false)
-                    {
-                        errorString = "Invalid Get Item parent element";
-                        return false;
-                    }
-
-                    if (sGetItemSearchType == "id")
-                    {
-                        GetElementByIdWebDriverCommand getItemByID = new GetElementByIdWebDriverCommand(sGetItemParentElement,
-                                                                                                            sGetItemName,
-                                                                                                            sGetItemSearchValue,
-                                                                                                            bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByID, isConditionalNode);
-                    }
-                    else if (sGetItemSearchType == "xpath")
-                    {
-                        GetElementByXPathWebDriverCommand getItemByXPath = new GetElementByXPathWebDriverCommand(sGetItemParentElement,
-                                                                                                            sGetItemName,
-                                                                                                            sGetItemSearchValue,
-                                                                                                            bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByXPath, isConditionalNode);
-                    }
-                    else if (sGetItemSearchType == "class")
-                    {
-                        GetElementByClassNameWebDriverCommand getItemByClass = new GetElementByClassNameWebDriverCommand(sGetItemParentElement,
-                                                                                                            sGetItemName,
-                                                                                                            sGetItemSearchValue,
-                                                                                                            bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByClass, isConditionalNode);
-                    }
-                    else if (sGetItemSearchType == "css")
-                    {
-                        GetElementByCssSelectorWebDriverCommand getItemByCss = new GetElementByCssSelectorWebDriverCommand(sGetItemParentElement,
-                                                                                                            sGetItemName,
-                                                                                                            sGetItemSearchValue,
-                                                                                                            bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByCss, isConditionalNode);
-                    }
-                    else if (sGetItemSearchType == "tag")
-                    {
-                        GetElementByTagNameWebDriverCommand getItemByTag = new GetElementByTagNameWebDriverCommand(sGetItemParentElement,
-                                                                                                            sGetItemName,
-                                                                                                            sGetItemSearchValue,
-                                                                                                            bGetItemSearchValueVariable);
-                        sequence.AddCommand(getItemByTag, isConditionalNode);
-                    }
-                    plugin.SetWebElement(sGetItemName, null);
-                    break;
-
-                case "GetActiveItem":
-                    string sGetActiveItemDestination = commandNode.Attributes["name"].Value.ToLower();
-                    GetActiveElementWebDriverCommand getActiveElementCommand = new GetActiveElementWebDriverCommand(sGetActiveItemDestination);
-                    sequence.AddCommand(getActiveElementCommand);
-                    break;
-                    
-                case "CheckItemVisible":
-                    string sCheckElementVisibleName = commandNode.SelectSingleNode("ItemName").InnerText;
-                    CheckElementVisibleWebDriverCommand checkElementVisibleCommand = new CheckElementVisibleWebDriverCommand(sCheckElementVisibleName);
-                    sequence.AddCommand(checkElementVisibleCommand, isConditionalNode);
-                    break;
-
-                case "GoBack":
-                    GoBackWebDriverCommand goBackCommand = new GoBackWebDriverCommand();
-                    sequence.AddCommand(goBackCommand);
-                    break;
-
-                case "GoTo":
-                    string sGoToDestination;
-                    bool bGoToDestIsVariable;
-                    if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sGoToDestination = commandNode.ChildNodes[0].InnerText.ToLower();
-                        bGoToDestIsVariable = true;
-                        if (plugin.GetVariable(sGoToDestination) == null)
+                        if (getItemSearchValueNode.HasChildNodes && getItemSearchValueNode.ChildNodes[0].NodeType != XmlNodeType.Text)
                         {
-                            errorString = "Invalid GoTo Destination";
+                            sGetItemSearchValue = getItemSearchValueNode.ChildNodes[0].InnerText.ToLower();
+                            bGetItemSearchValueVariable = true;
+                            if (plugin.GetVariable(sGetItemSearchValue) == null)
+                            {
+                                errorString = "Invalid Get Item Search Value";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sGetItemSearchValue = getItemSearchValueNode.InnerText;
+                            bIsCommandSource2Variable = false;
+                        }
+
+
+                        if (sGetItemName == "" || sGetItemSearchType == "" || sGetItemSearchValue == "")
+                        {
+                            errorString = "Invalid Get Item name \"" + sGetItemName;
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sGoToDestination = commandNode.InnerText;
-                        bGoToDestIsVariable = false;
-                    }
-                    GoToWebDriverCommand goToCommand = new GoToWebDriverCommand(sGoToDestination, bGoToDestIsVariable);
-                    sequence.AddCommand(goToCommand);
-                    break;
 
-                case "Refresh":
-                    RefreshWebDriverCommand refreshCommand = new RefreshWebDriverCommand();
-                    sequence.AddCommand(refreshCommand);
-                    break;
-
-                case "Type":
-                    sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-
-                    string sTypeValue;
-                    bool bTypeIsVariable;
-                    if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sTypeValue = commandNode.SelectSingleNode("String").ChildNodes[0].InnerText.ToLower();
-                        bTypeIsVariable = true;
-                        if (plugin.GetVariable(sTypeValue) == null)
+                        if (sGetItemParentElement != "" && plugin.WebElementExists(sGetItemParentElement) == false)
                         {
-                            errorString = "Invalid Type Command Variable";
+                            errorString = "Invalid Get Item parent element";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sTypeValue = commandNode.InnerText;
-                        bTypeIsVariable = false;
-                    }
-                    TypeElementWebDriverCommand typeCommand = new TypeElementWebDriverCommand(sCommandDestination, sTypeValue, bTypeIsVariable);
-                    sequence.AddCommand(typeCommand);
-                    break;
 
-                case "Sleep":
-                    int dwSleepTime = Int32.Parse(commandNode.InnerText);
-                    SleepCommand sleepCommand = new SleepCommand(dwSleepTime);
-                    sequence.AddCommand(sleepCommand);
-                    break;
-
-                case "SetVariable":
-                    string sSetVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sSetVariableName) == null)
-                    {
-                        errorString = "Invalid SetVariable Destination";
-                        return false;
-                    }
-                    string sSetVariableValue = commandNode.SelectSingleNode("String").InnerText;
-                    SetVariableCommand setVariableCommand = new SetVariableCommand(sSetVariableName, sSetVariableValue);
-                    sequence.AddCommand(setVariableCommand);
-                    break;
-
-                case "CompareVariables":
-                    string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText.ToLower();
-                    if (plugin.GetVariable(sCompareVariable1Name) == null)
-                    {
-                        errorString = "Invalid CompareVariables Source1";
-                        return false;
-                    }
-                    string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText.ToLower();
-                    if (plugin.GetVariable(sCompareVariable2Name) == null)
-                    {
-                        errorString = "Invalid CompareVariables Source2";
-                        return false;
-                    }
-                    CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
-                    sequence.AddCommand(compareVariableCommand, isConditionalNode);
-                    break;
-
-                case "IncreaseVariable":
-                    string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sIncreaseVariableName) == null)
-                    {
-                        errorString = "Invalid IncreaseVariable Destination";
-                        return false;
-                    }
-                    int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
-                    IncreaseVariableCommand increaseVariableCommand = new IncreaseVariableCommand(sIncreaseVariableName, dwIncreaseVariableValue);
-                    sequence.AddCommand(increaseVariableCommand);
-                    break;
-
-                case "DecreaseVariable":
-                    string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sDecreaseVariableName) == null)
-                    {
-                        errorString = "Invalid DecreaseVariable Destination";
-                        return false;
-                    }
-                    int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
-                    DecreaseVariableCommand decreaseVariableCommand = new DecreaseVariableCommand(sDecreaseVariableName, dwDecreaseVariableValue);
-                    sequence.AddCommand(decreaseVariableCommand);
-                    break;
-
-                case "Call":
-                    string callSequenceName = commandNode.InnerText;
-                    CallCommand callCommand = new CallCommand(callSequenceName);
-                    sequence.AddCommand(callCommand);
-                    break;
-
-                case "GetTextFromWebItem":
-                    string sGetTextSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
-                    if (plugin.WebElementExists(sGetTextSource) == false)
-                    {
-                        errorString = "Invalid GetTextFromWebItem element";
-                        return false;
-                    }
-                    string sGetTextDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sGetTextDest) == null)
-                    {
-                        errorString = "Invalid GetTextFromWebItem Destination";
-                        return false;
-                    }
-                    GetInnerTextFromElementWebDriverCommand getTextFromElementCommand = new GetInnerTextFromElementWebDriverCommand(sGetTextSource, sGetTextDest);
-                    sequence.AddCommand(getTextFromElementCommand);
-                    break;
-
-                case "GetIntegerFromWebItem":
-                    string sGetIntSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
-                    if (plugin.WebElementExists(sGetIntSource) == false)
-                    {
-                        errorString = "Invalid GetIntegerFromWebItem element";
-                        return false;
-                    }
-                    string sGetIntDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sGetIntSource) == null)
-                    {
-                        errorString = "Invalid GetIntegerFromWebItem Destination";
-                        return false;
-                    }
-                    GetInnerIntegerFromElementWebDriverCommand getIntFromElementCommand = new GetInnerIntegerFromElementWebDriverCommand(sGetIntSource, sGetIntDest);
-                    sequence.AddCommand(getIntFromElementCommand);
-                    break;
-
-                case "GetLinkFromWebItem":
-                    string sGetLinkSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
-                    if (plugin.WebElementExists(sGetLinkSource) == false)
-                    {
-                        errorString = "Invalid GetLinkFromWebItem element";
-                        return false;
-                    }
-                    string sGetLinkDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
-                    if (plugin.GetVariable(sGetLinkDest) == null)
-                    {
-                        errorString = "Invalid GetLinkFromWebItem Destination";
-                        return false;
-                    }
-                    GetInnerLinkFromElementWebDriverCommand getLinkFromElementCommand = new GetInnerLinkFromElementWebDriverCommand(sGetLinkSource, sGetLinkDest);
-                    sequence.AddCommand(getLinkFromElementCommand);
-                    break;
-
-                case "GreaterThan":
-                    XmlNode greaterThanSource1Node = commandNode.SelectSingleNode("Source1");
-                    string sGreaterThanSource1 = "";
-                    bool bGreaterThanSource1Variable = false;
-                    if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sGreaterThanSource1 = greaterThanSource1Node.InnerText.ToLower();
-                        bGreaterThanSource1Variable = true;
-                        if (plugin.GetVariable(sGreaterThanSource1) == null)
+                        if (sGetItemSearchType == "id")
                         {
-                            errorString = "Invalid Greater Than Command Variable";
+                            GetElementByIdWebDriverCommand getItemByID = new GetElementByIdWebDriverCommand(sGetItemParentElement,
+                                                                                                                sGetItemName,
+                                                                                                                sGetItemSearchValue,
+                                                                                                                bGetItemSearchValueVariable);
+                            sequence.AddCommand(getItemByID, isConditionalNode);
+                        }
+                        else if (sGetItemSearchType == "xpath")
+                        {
+                            GetElementByXPathWebDriverCommand getItemByXPath = new GetElementByXPathWebDriverCommand(sGetItemParentElement,
+                                                                                                                sGetItemName,
+                                                                                                                sGetItemSearchValue,
+                                                                                                                bGetItemSearchValueVariable);
+                            sequence.AddCommand(getItemByXPath, isConditionalNode);
+                        }
+                        else if (sGetItemSearchType == "class")
+                        {
+                            GetElementByClassNameWebDriverCommand getItemByClass = new GetElementByClassNameWebDriverCommand(sGetItemParentElement,
+                                                                                                                sGetItemName,
+                                                                                                                sGetItemSearchValue,
+                                                                                                                bGetItemSearchValueVariable);
+                            sequence.AddCommand(getItemByClass, isConditionalNode);
+                        }
+                        else if (sGetItemSearchType == "css")
+                        {
+                            GetElementByCssSelectorWebDriverCommand getItemByCss = new GetElementByCssSelectorWebDriverCommand(sGetItemParentElement,
+                                                                                                                sGetItemName,
+                                                                                                                sGetItemSearchValue,
+                                                                                                                bGetItemSearchValueVariable);
+                            sequence.AddCommand(getItemByCss, isConditionalNode);
+                        }
+                        else if (sGetItemSearchType == "tag")
+                        {
+                            GetElementByTagNameWebDriverCommand getItemByTag = new GetElementByTagNameWebDriverCommand(sGetItemParentElement,
+                                                                                                                sGetItemName,
+                                                                                                                sGetItemSearchValue,
+                                                                                                                bGetItemSearchValueVariable);
+                            sequence.AddCommand(getItemByTag, isConditionalNode);
+                        }
+                        plugin.SetWebElement(sGetItemName, null);
+                        break;
+
+                    case "CountItems":
+                        string sCountItemsVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        string sCountItemsParentElement = commandNode.SelectSingleNode("ParentElement").InnerText.ToLower();
+                        string sCountItemsXpath = commandNode.SelectSingleNode("XPath").InnerText;
+                        CountElementsWebDriverCommand countElementsCommand = new CountElementsWebDriverCommand(sCountItemsParentElement, sCountItemsVariableName, sCountItemsXpath);
+                        sequence.AddCommand(countElementsCommand, isConditionalNode);
+                        break;
+
+                    case "GetActiveItem":
+                        string sGetActiveItemDestination = commandNode.Attributes["name"].Value.ToLower();
+                        GetActiveElementWebDriverCommand getActiveElementCommand = new GetActiveElementWebDriverCommand(sGetActiveItemDestination);
+                        sequence.AddCommand(getActiveElementCommand);
+                        break;
+
+                    case "CheckItemVisible":
+                        string sCheckElementVisibleName = commandNode.SelectSingleNode("ItemName").InnerText;
+                        CheckElementVisibleWebDriverCommand checkElementVisibleCommand = new CheckElementVisibleWebDriverCommand(sCheckElementVisibleName);
+                        sequence.AddCommand(checkElementVisibleCommand, isConditionalNode);
+                        break;
+
+                    case "GoBack":
+                        GoBackWebDriverCommand goBackCommand = new GoBackWebDriverCommand();
+                        sequence.AddCommand(goBackCommand);
+                        break;
+
+                    case "GoTo":
+                        string sGoToDestination;
+                        bool bGoToDestIsVariable;
+                        if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sGoToDestination = commandNode.ChildNodes[0].InnerText.ToLower();
+                            bGoToDestIsVariable = true;
+                            if (plugin.GetVariable(sGoToDestination) == null)
+                            {
+                                errorString = "Invalid GoTo Destination";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sGoToDestination = commandNode.InnerText;
+                            bGoToDestIsVariable = false;
+                        }
+                        GoToWebDriverCommand goToCommand = new GoToWebDriverCommand(sGoToDestination, bGoToDestIsVariable);
+                        sequence.AddCommand(goToCommand);
+                        break;
+
+                    case "Refresh":
+                        RefreshWebDriverCommand refreshCommand = new RefreshWebDriverCommand();
+                        sequence.AddCommand(refreshCommand);
+                        break;
+
+                    case "Type":
+                        sCommandDestination = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+
+                        string sTypeValue;
+                        bool bTypeIsVariable;
+                        if (commandNode.HasChildNodes && commandNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sTypeValue = commandNode.SelectSingleNode("String").ChildNodes[0].InnerText.ToLower();
+                            bTypeIsVariable = true;
+                            if (plugin.GetVariable(sTypeValue) == null)
+                            {
+                                errorString = "Invalid Type Command Variable";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sTypeValue = commandNode.InnerText;
+                            bTypeIsVariable = false;
+                        }
+                        TypeElementWebDriverCommand typeCommand = new TypeElementWebDriverCommand(sCommandDestination, sTypeValue, bTypeIsVariable);
+                        sequence.AddCommand(typeCommand);
+                        break;
+
+                    case "Sleep":
+                        int dwSleepTime = Int32.Parse(commandNode.InnerText);
+                        SleepCommand sleepCommand = new SleepCommand(dwSleepTime);
+                        sequence.AddCommand(sleepCommand);
+                        break;
+
+                    case "SetVariable":
+                        string sSetVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sSetVariableName) == null)
+                        {
+                            errorString = "Invalid SetVariable Destination";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sGreaterThanSource1 = greaterThanSource1Node.InnerText;
-                        bGreaterThanSource1Variable = false;
-                    }
+                        string sSetVariableValue = commandNode.SelectSingleNode("String").InnerText;
+                        SetVariableCommand setVariableCommand = new SetVariableCommand(sSetVariableName, sSetVariableValue);
+                        sequence.AddCommand(setVariableCommand);
+                        break;
 
-                    XmlNode greaterThanSource2Node = commandNode.SelectSingleNode("Source2");
-                    string sGreaterThanSource2 = "";
-                    bool bGreaterThanSource2Variable = false;
-                    if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sGreaterThanSource2 = greaterThanSource2Node.InnerText.ToLower();
-                        bGreaterThanSource2Variable = true;
-                        if (plugin.GetVariable(sGreaterThanSource2) == null)
+                    case "CompareVariables":
+                        string sCompareVariable1Name = commandNode.SelectSingleNode("Variable1").InnerText.ToLower();
+                        if (plugin.GetVariable(sCompareVariable1Name) == null)
                         {
-                            errorString = "Invalid Greater Than Command Variable";
+                            errorString = "Invalid CompareVariables Source1";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sGreaterThanSource2 = greaterThanSource2Node.InnerText;
-                        bGreaterThanSource2Variable = false;
-                    }
-
-                    GreaterThanCommand greaterThanCommand = new GreaterThanCommand(sGreaterThanSource1, bGreaterThanSource1Variable, sGreaterThanSource2, bGreaterThanSource2Variable);
-                    sequence.AddCommand(greaterThanCommand, isConditionalNode);
-                    break;
-
-                case "VariableContains":
-                    string sVariableContainsName = commandNode.SelectSingleNode("VariableName").InnerText.ToLower();
-                    XmlNode variableContainsSourceNode = commandNode.SelectSingleNode("Source");
-                    string sVariableContainsSource = "";
-                    bool bVariableContainsSourceVariable = false;
-                    if (variableContainsSourceNode.HasChildNodes && variableContainsSourceNode.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sVariableContainsSource = variableContainsSourceNode.InnerText.ToLower();
-                        bVariableContainsSourceVariable = true;
-                        if (plugin.GetVariable(sVariableContainsSource) == null)
+                        string sCompareVariable2Name = commandNode.SelectSingleNode("Variable2").InnerText.ToLower();
+                        if (plugin.GetVariable(sCompareVariable2Name) == null)
                         {
-                            errorString = "Invalid Greater Than Command Variable";
+                            errorString = "Invalid CompareVariables Source2";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sVariableContainsSource = variableContainsSourceNode.InnerText;
-                        bVariableContainsSourceVariable = false;
-                    }
-                    VariableContainsCommand variableContainsCommand = new VariableContainsCommand(sVariableContainsName,
-                                                                                                    sVariableContainsSource,
-                                                                                                    bVariableContainsSourceVariable);
-                    sequence.AddCommand(variableContainsCommand, isConditionalNode);
-                    break;
+                        CompareVariableCommand compareVariableCommand = new CompareVariableCommand(sCompareVariable1Name, sCompareVariable2Name);
+                        sequence.AddCommand(compareVariableCommand, isConditionalNode);
+                        break;
 
-                case "CheckTriggers":
-                    string sTriggersType = commandNode.SelectSingleNode("TriggerType").InnerText;
-                    string sVariableName = commandNode.SelectSingleNode("VariableName").InnerText;
-                    string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
-                    CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sVariableName, sReaction);
-                    sequence.AddCommand(checkTriggerCommand, isConditionalNode);
-                    break;
-
-                case "LogLink":
-                    XmlNode linkMessageSource = commandNode.SelectSingleNode("Message");
-                    bool bIsLinkMessageSourceVariable = false;
-                    string sLinkMessageSource = "";
-                    if (linkMessageSource.HasChildNodes && linkMessageSource.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sLinkMessageSource = linkMessageSource.ChildNodes[0].InnerText.ToLower();
-                        bIsLinkMessageSourceVariable = true;
-                        if (plugin.GetVariable(sLinkMessageSource) == null)
+                    case "IncreaseVariable":
+                        string sIncreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sIncreaseVariableName) == null)
                         {
-                            errorString = "Invalid LogLink Message";
+                            errorString = "Invalid IncreaseVariable Destination";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sLinkMessageSource = linkMessageSource.InnerText;
-                        bIsLinkMessageSourceVariable = false;
-                    }
+                        int dwIncreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
+                        IncreaseVariableCommand increaseVariableCommand = new IncreaseVariableCommand(sIncreaseVariableName, dwIncreaseVariableValue);
+                        sequence.AddCommand(increaseVariableCommand);
+                        break;
 
-                    XmlNode linkSource = commandNode.SelectSingleNode("Link");
-                    bool bIsLinkSourceVariable = false;
-                    string sLinkSource = "";
-                    if (linkSource.HasChildNodes && linkSource.ChildNodes[0].NodeType != XmlNodeType.Text)
-                    {
-                        sLinkSource = linkSource.ChildNodes[0].InnerText.ToLower();
-                        bIsLinkSourceVariable = true;
-                        if (plugin.GetVariable(sLinkSource) == null)
+                    case "DecreaseVariable":
+                        string sDecreaseVariableName = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sDecreaseVariableName) == null)
                         {
-                            errorString = "Invalid LogLink Message";
+                            errorString = "Invalid DecreaseVariable Destination";
                             return false;
                         }
-                    }
-                    else
-                    {
-                        sLinkSource = linkMessageSource.InnerText;
-                        bIsLinkSourceVariable = false;
-                    }
+                        int dwDecreaseVariableValue = Int32.Parse(commandNode.SelectSingleNode("Quantity").InnerText);
+                        DecreaseVariableCommand decreaseVariableCommand = new DecreaseVariableCommand(sDecreaseVariableName, dwDecreaseVariableValue);
+                        sequence.AddCommand(decreaseVariableCommand);
+                        break;
 
-                    LogLinkCommand logLinkCommand = new LogLinkCommand( sLinkMessageSource,
-                                                                        bIsLinkMessageSourceVariable,
-                                                                        sLinkSource,
-                                                                        bIsLinkSourceVariable);
-                    sequence.AddCommand(logLinkCommand);
-                    break;
+                    case "Call":
+                        string callSequenceName = commandNode.InnerText;
+                        CallCommand callCommand = new CallCommand(callSequenceName);
+                        sequence.AddCommand(callCommand);
+                        break;
 
-                default:
-                    errorString = "Invalid command " + sCommandName + " in sequence " + sSequenceName;
-                    return false;
+                    case "GetTextFromWebItem":
+                        string sGetTextSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                        if (plugin.WebElementExists(sGetTextSource) == false)
+                        {
+                            errorString = "Invalid GetTextFromWebItem element";
+                            return false;
+                        }
+                        string sGetTextDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sGetTextDest) == null)
+                        {
+                            errorString = "Invalid GetTextFromWebItem Destination";
+                            return false;
+                        }
+                        GetInnerTextFromElementWebDriverCommand getTextFromElementCommand = new GetInnerTextFromElementWebDriverCommand(sGetTextSource, sGetTextDest);
+                        sequence.AddCommand(getTextFromElementCommand);
+                        break;
+
+                    case "GetIntegerFromWebItem":
+                        string sGetIntSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                        if (plugin.WebElementExists(sGetIntSource) == false)
+                        {
+                            errorString = "Invalid GetIntegerFromWebItem element";
+                            return false;
+                        }
+                        string sGetIntDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sGetIntSource) == null)
+                        {
+                            errorString = "Invalid GetIntegerFromWebItem Destination";
+                            return false;
+                        }
+                        GetInnerIntegerFromElementWebDriverCommand getIntFromElementCommand = new GetInnerIntegerFromElementWebDriverCommand(sGetIntSource, sGetIntDest);
+                        sequence.AddCommand(getIntFromElementCommand);
+                        break;
+
+                    case "GetLinkFromWebItem":
+                        string sGetLinkSource = commandNode.SelectSingleNode("Source").InnerText.ToLower();
+                        if (plugin.WebElementExists(sGetLinkSource) == false)
+                        {
+                            errorString = "Invalid GetLinkFromWebItem element";
+                            return false;
+                        }
+                        string sGetLinkDest = commandNode.SelectSingleNode("Destination").InnerText.ToLower();
+                        if (plugin.GetVariable(sGetLinkDest) == null)
+                        {
+                            errorString = "Invalid GetLinkFromWebItem Destination";
+                            return false;
+                        }
+                        GetInnerLinkFromElementWebDriverCommand getLinkFromElementCommand = new GetInnerLinkFromElementWebDriverCommand(sGetLinkSource, sGetLinkDest);
+                        sequence.AddCommand(getLinkFromElementCommand);
+                        break;
+
+                    case "GreaterThan":
+                        XmlNode greaterThanSource1Node = commandNode.SelectSingleNode("Source1");
+                        string sGreaterThanSource1 = "";
+                        bool bGreaterThanSource1Variable = false;
+                        if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sGreaterThanSource1 = greaterThanSource1Node.InnerText.ToLower();
+                            bGreaterThanSource1Variable = true;
+                            if (plugin.GetVariable(sGreaterThanSource1) == null)
+                            {
+                                errorString = "Invalid Greater Than Command Variable";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sGreaterThanSource1 = greaterThanSource1Node.InnerText;
+                            bGreaterThanSource1Variable = false;
+                        }
+
+                        XmlNode greaterThanSource2Node = commandNode.SelectSingleNode("Source2");
+                        string sGreaterThanSource2 = "";
+                        bool bGreaterThanSource2Variable = false;
+                        if (greaterThanSource1Node.HasChildNodes && greaterThanSource1Node.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sGreaterThanSource2 = greaterThanSource2Node.InnerText.ToLower();
+                            bGreaterThanSource2Variable = true;
+                            if (plugin.GetVariable(sGreaterThanSource2) == null)
+                            {
+                                errorString = "Invalid Greater Than Command Variable";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sGreaterThanSource2 = greaterThanSource2Node.InnerText;
+                            bGreaterThanSource2Variable = false;
+                        }
+
+                        GreaterThanCommand greaterThanCommand = new GreaterThanCommand(sGreaterThanSource1, bGreaterThanSource1Variable, sGreaterThanSource2, bGreaterThanSource2Variable);
+                        sequence.AddCommand(greaterThanCommand, isConditionalNode);
+                        break;
+
+                    case "VariableContains":
+                        string sVariableContainsName = commandNode.SelectSingleNode("VariableName").InnerText.ToLower();
+                        XmlNode variableContainsSourceNode = commandNode.SelectSingleNode("Source");
+                        string sVariableContainsSource = "";
+                        bool bVariableContainsSourceVariable = false;
+                        if (variableContainsSourceNode.HasChildNodes && variableContainsSourceNode.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sVariableContainsSource = variableContainsSourceNode.InnerText.ToLower();
+                            bVariableContainsSourceVariable = true;
+                            if (plugin.GetVariable(sVariableContainsSource) == null)
+                            {
+                                errorString = "Invalid Greater Than Command Variable";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sVariableContainsSource = variableContainsSourceNode.InnerText;
+                            bVariableContainsSourceVariable = false;
+                        }
+                        VariableContainsCommand variableContainsCommand = new VariableContainsCommand(sVariableContainsName,
+                                                                                                        sVariableContainsSource,
+                                                                                                        bVariableContainsSourceVariable);
+                        sequence.AddCommand(variableContainsCommand, isConditionalNode);
+                        break;
+
+                    case "CheckTriggers":
+                        string sTriggersType = commandNode.SelectSingleNode("TriggerType").InnerText;
+                        string sVariableName = commandNode.SelectSingleNode("VariableName").InnerText;
+                        string sReaction = commandNode.SelectSingleNode("Reaction").InnerText;
+                        CheckTriggersCommand checkTriggerCommand = new CheckTriggersCommand(sTriggersType, sVariableName, sReaction);
+                        sequence.AddCommand(checkTriggerCommand, isConditionalNode);
+                        break;
+
+                    case "LogLink":
+                        XmlNode linkMessageSource = commandNode.SelectSingleNode("Message");
+                        bool bIsLinkMessageSourceVariable = false;
+                        string sLinkMessageSource = "";
+                        if (linkMessageSource.HasChildNodes && linkMessageSource.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sLinkMessageSource = linkMessageSource.ChildNodes[0].InnerText.ToLower();
+                            bIsLinkMessageSourceVariable = true;
+                            if (plugin.GetVariable(sLinkMessageSource) == null)
+                            {
+                                errorString = "Invalid LogLink Message";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sLinkMessageSource = linkMessageSource.InnerText;
+                            bIsLinkMessageSourceVariable = false;
+                        }
+
+                        XmlNode linkSource = commandNode.SelectSingleNode("Link");
+                        bool bIsLinkSourceVariable = false;
+                        string sLinkSource = "";
+                        if (linkSource.HasChildNodes && linkSource.ChildNodes[0].NodeType != XmlNodeType.Text)
+                        {
+                            sLinkSource = linkSource.ChildNodes[0].InnerText.ToLower();
+                            bIsLinkSourceVariable = true;
+                            if (plugin.GetVariable(sLinkSource) == null)
+                            {
+                                errorString = "Invalid LogLink Message";
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            sLinkSource = linkMessageSource.InnerText;
+                            bIsLinkSourceVariable = false;
+                        }
+
+                        LogLinkCommand logLinkCommand = new LogLinkCommand(sLinkMessageSource,
+                                                                            bIsLinkMessageSourceVariable,
+                                                                            sLinkSource,
+                                                                            bIsLinkSourceVariable);
+                        sequence.AddCommand(logLinkCommand);
+                        break;
+
+                    default:
+                        errorString = "Invalid command " + sCommandName + " in sequence " + sSequenceName;
+                        return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
             }
 
             return true;
@@ -572,7 +588,7 @@ namespace SNMS_Server.Plugins
                 string varType = variableNode.SelectSingleNode("ConstantType").InnerText.ToLower();
                 string varValue = variableNode.SelectSingleNode("ConstantValue").InnerText;
 
-                if (varName == "" || varType == "" || varValue == "")
+                if (varName == "" || varType == "")// || varValue == "")
                 {
                     errorString = "Invalid constant \"" + varName + "\" type \"" + varType + "\" value \"" + varValue + "\"";
                     return null;
