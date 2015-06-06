@@ -64,7 +64,7 @@ namespace SNMS_Server.RealTimeEngines
                     string sReactionLog = "Reaction " + reaction.GetName() + " will be executed as a result of the trigger validation";
                     logger.Log(Logger.LOG_TYPE_REACTION, sReactionLog);
 
-                    m_variableDictionary.SetVariable("SystemReactionValue".ToLower(), new StringVariable(sReactionValue));
+                    m_variableDictionary.SetVariable("SystemReactionValue".ToLower(), new IntStrVariable(sReactionValue));
                     configuration.RunSequence(reaction, ref sErrorString, null);
 
                     if (sErrorString != "")

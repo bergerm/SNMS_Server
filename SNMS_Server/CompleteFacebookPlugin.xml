@@ -1,0 +1,754 @@
+﻿<Plugin>
+  <!-- Plugin Info -->
+  <PluginName>Facebook</PluginName>
+  
+  <PluginDescription>
+    This plugin is able to connect to facebook accounts, read and write private messages, read and write wall posts.
+  </PluginDescription>
+  
+  <PluginVersion>1.0.0</PluginVersion>
+  
+  <!-- Mandatory Variables! These are obligatory in EVERY plugin and must not be used by any command -->
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemResultString">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <!-- SystemReactionSequence is the variable used to select the required reaction for the validated trigger -->
+  <Variable name="SystemReactionSequence">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <!-- SystemResultString is the variable used to store the result of ANY conditional command -->
+  <Variable name="SystemReactionValue">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <!-- Constants for entire system -->
+  <Constant name="baseURL">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>http://www.facebook.com</ConstantValue>
+  </Constant>
+  
+  <Constant name="zeroConstant">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>0</ConstantValue>
+  </Constant>
+  
+  <Constant name="emptyString">
+    <ConstantType>string</ConstantType>
+    <ConstantValue></ConstantValue>
+  </Constant>
+
+  <!-- Variables for entire system -->
+  <Variable name="userName">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="password">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkWall_tempWallItemCounter">
+    <VariableType>integer</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoXpath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Constant name="checkWall_tempWallItemMinutesAgoNOW">
+    <ConstantType>string</ConstantType>
+    <ConstantValue>Just now</ConstantValue>
+  </Constant>
+
+  <Variable name="checkWall_tempWallItemMinutesAgoMax">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_postMinuesAgo">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkWall_postText">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_commentButtonXPath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_responseString">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_wallPostXPath">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="respondToPost_wallPostLink">
+    <VariableType>string</VariableType>
+  </Variable>
+
+  <Variable name="checkMessages_numberOfConversations">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_numberOfConversationsInteger">
+    <VariableType>integer</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_conversationXpath">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_conversationCounter">
+    <VariableType>integer</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_thisUserLink">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_currentMessageUserLink">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_numberOfMessagesInConversation">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_messageXpath">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_messageUserLinkXpath">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <Variable name="checkMessages_messageText">
+    <VariableType>string</VariableType>
+  </Variable>
+  
+  <!-- Set up sequence is always run on plugin start and can be called later -->
+  <Sequence name="setup">
+    <CatenateString>
+      <Destination>password</Destination>
+      <Source1><Variable>password</Variable></Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
+  </Sequence>
+
+  <!-- Login to Facebook -->
+  <Sequence name="login">
+    <Call>setup</Call>
+    
+    <GoTo>
+      <Constant>baseURL</Constant>
+    </GoTo>
+
+    <GetItem name="userNameField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>email</SearchValue>
+    </GetItem>
+
+    <GetItem name="passwordField">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>pass</SearchValue>
+    </GetItem>
+
+    <Type>
+      <Destination>userNameField</Destination>
+      <String>
+        <Variable>userName</Variable>
+      </String>
+    </Type>
+
+    <Type>
+      <Destination>passwordField</Destination>
+      <String>
+        <Variable>password</Variable>
+      </String>
+    </Type>
+
+    <Call>main page</Call>
+  </Sequence>
+
+  <!-- Go to main page -->
+  <Sequence name="main page">
+    <GetItem name="mainPageButton">
+      <ParentElement></ParentElement>
+      <SearchType>xPath</SearchType>
+      <SearchValue>//h1/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>mainPageButton</Destination>
+    </Click>
+  </Sequence>
+
+  <!-- Check messages on wall -->
+  <Sequence name="checkWall">
+    <GetItem name="checkWall_wallIcon">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//li/a</SearchValue>
+    </GetItem>
+
+    <Click>
+      <Destination>checkWall_wallIcon</Destination>
+    </Click>
+
+    <Sleep>1000</Sleep>
+    
+    <!-- Counter Set to 0 -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <String>1</String>
+    </SetVariable>
+
+    <Label>WALL ITEM LOOP</Label>
+    <!-- create xpath for required post -->
+    <SetVariable>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>checkWall_tempWallItemMinutesAgoXpath</Destination>
+      <Source1>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </Source1>
+      <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a/abbr</Source2>
+    </CatenateString>
+
+    <!-- if no item found, finish sequence -->
+    <Condition>
+      <True>ITEM FOUND</True>
+      <False>FINISHED</False>
+    </Condition>
+    <GetItem name="checkWall_minutesAgoText">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>checkWall_tempWallItemMinutesAgoXpath</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <!-- item was found, continue sequence -->
+    <Label>ITEM FOUND</Label>
+    
+    <GetTextFromWebItem>
+      <Source>checkWall_minutesAgoText</Source>
+      <Destination>checkWall_postMinuesAgo</Destination>
+    </GetTextFromWebItem>
+
+    <!-- If time string is "Just Now" item should be checked -->
+    <Condition>
+      <True>JUST NOW</True>
+      <False>MINUTES OR HOURS</False>
+    </Condition>
+    <CompareVariables>
+      <Variable1>checkWall_postMinuesAgo</Variable1>
+      <Variable2>checkWall_tempWallItemMinutesAgoNOW</Variable2>
+    </CompareVariables>
+
+    <!-- Set minutes ago to 0 and jump to trigger checking -->
+    <Label>JUST NOW</Label>
+    <SetVariable>
+      <Destination>checkWall_postMinuesAgo</Destination>
+      <String>0</String>
+    </SetVariable>
+
+    <Jump>X MINUTES</Jump>
+
+    <!-- Check if the item was posted minutes ago or hours, days, etc... -->
+    <Label>MINUTES OR HOURS</Label>
+    <Condition>
+      <True>X MINUTES</True>
+      <False>FINISHED</False>
+    </Condition>
+    <VariableContains>
+      <VariableName>checkWall_postMinuesAgo</VariableName>
+      <Source>min</Source>
+    </VariableContains>
+
+    <!-- Check if was posted within the last X minutes (configurable by checkWall_tempWallItemMinutesAgoMax) -->
+    <Label>X MINUTES</Label>
+    <Condition>
+      <True>FINISHED</True>
+      <False>CONTINUE</False>
+    </Condition>
+    <GreaterThan>
+      <Source1>
+        <Variable>checkWall_postMinuesAgo</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemMinutesAgoMax</Variable>
+      </Source2>
+    </GreaterThan>
+
+    <!-- Read the message -->
+    <Label>CONTINUE</Label>
+    <GetItem name="checkWall_itemText">
+      <ParentElement>checkWall_minutesAgoText</ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>../../../../../../../../../..//p</SearchValue>
+    </GetItem>
+
+    <GetTextFromWebItem>
+      <Source>checkWall_itemText</Source>
+      <Destination>checkWall_postText</Destination>
+    </GetTextFromWebItem>
+
+    <!-- Check Triggers, if Validated, Call ReactToWallPost sequence -->
+    <CheckTriggers>
+      <TriggerType>wallPost</TriggerType>
+      <VariableName>checkWall_postText</VariableName>
+      <Reaction>reactToWallPost</Reaction>
+    </CheckTriggers>
+
+    <!-- Prepare for next post and Jump to WALL ITEM LOOP -->
+    <IncreaseVariable>
+      <Destination>checkWall_tempWallItemCounter</Destination>
+      <Quantity>1</Quantity>
+    </IncreaseVariable>
+    
+    <Jump>WALL ITEM LOOP</Jump>
+
+    <!-- finished sequence -->
+    <Label>FINISHED</Label>
+    <Sleep>0</Sleep>
+
+  </Sequence> 
+
+  <!-- Check private messages -->
+  <Sequence name="checkMessages">
+	<!-- Check if new messages received -->
+	<Condition>
+		<True>NEW CONVERSATIONS</True>
+		<False>NO MORE CONVERSATIONS</False>
+	</Condition>
+	<GetItem name="checkMessages_numberOfNewConversationsText">
+      <ParentElement></ParentElement>
+      <SearchType>ID</SearchType>
+      <SearchValue>mercurymessagesCountValue</SearchValue>
+    </GetItem>
+	
+	<Label>NEW CONVERSATIONS</Label>
+	<GetTextFromWebItem>
+      <Source>checkMessages_numberOfNewConversationsText</Source>
+      <Destination>checkMessages_numberOfConversations</Destination>
+    </GetTextFromWebItem>
+	
+	<CatenateString>
+	  <Destination>checkMessages_numberOfConversationsInteger</Destination>
+      <Source1>
+        <Variable>checkMessages_numberOfConversations</Variable>
+      </Source1>
+      <Source2>
+        <Variable>emptyString</Variable>
+      </Source2>
+	</CatenateString>
+  
+	<GetItem name="checkMessages_messagesIcon">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//a[@name='mercurymessages']</SearchValue>
+    </GetItem>
+	
+	<Click>
+      <Destination>checkMessages_messagesIcon</Destination>
+    </Click>
+
+    <Sleep>500</Sleep>
+	
+	<GetItem name="checkMessages_showAllMessages">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//div[@id='MercuryJewelFooter']/div/a/span</SearchValue>
+    </GetItem>
+	
+	<Click>
+      <Destination>checkMessages_showAllMessages</Destination>
+    </Click>
+
+    <Sleep>1000</Sleep>
+	
+	<SetVariable>
+      <Destination>checkMessages_conversationCounter</Destination>
+      <String>0</String>
+    </SetVariable>
+	
+	<GetItem name="checkMessages_thisUserLinkButton">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//li/a</SearchValue>
+    </GetItem>
+	
+	<GetLinkFromWebItem>
+      <Source>checkMessages_thisUserLinkButton</Source>
+      <Destination>checkMessages_thisUserLink</Destination>
+    </GetLinkFromWebItem>
+	
+	<Label>MORE CONVERSATIONS</Label>
+	<!-- this is the conversation xpath //li[1]/div/a/div/div[2]/div/span -->
+	<!-- create xpath for required conversation -->
+	<IncreaseVariable>
+		<Destination>checkMessages_conversationCounter</Destination>
+		<Quantity>1</Quantity>
+	</IncreaseVariable>
+	
+    <SetVariable>
+      <Destination>checkMessages_conversationXpath</Destination>
+      <String>//li[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>checkMessages_conversationXpath</Destination>
+      <Source1>
+        <Variable>checkMessages_conversationXpath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkMessages_conversationCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>checkMessages_conversationXpath</Destination>
+      <Source1>
+        <Variable>checkMessages_conversationXpath</Variable>
+      </Source1>
+      <Source2>]/div/a/div/div[2]/div/span</Source2>
+    </CatenateString>
+	
+	<GetItem name="checkMessages_conversation">
+		<ParentElement></ParentElement>
+		<SearchType>XPath</SearchType>
+		<SearchValue>
+			<Variable>checkMessages_conversationXpath</Variable>
+		</SearchValue>
+    </GetItem>
+	
+	<Click>
+		<Destination>checkMessages_conversation</Destination>
+	</Click>
+	
+	<GetItem name="checkMessages_conversationMessages">
+		<ParentElement></ParentElement>
+		<SearchType>ID</SearchType>
+		<SearchValue>webMessengerRecentMessages</SearchValue>
+    </GetItem>
+	
+	<!-- Count how many messages in conversation -->
+	<CountItems>
+		<Destination>checkMessages_numberOfMessagesInConversation</Destination>
+		<XPath>//*[starts-with(@id, 'wm:')]</XPath>
+		<!-- <XPath>//li</XPath> -->
+		<ParentElement>checkMessages_conversationMessages</ParentElement>
+	</CountItems>
+	
+	<Label>NEXT MESSAGE</Label>
+	<!-- Create xpath for next message -->
+	<SetVariable>
+      <Destination>checkMessages_messageXpath</Destination>
+      <String>//*[starts-with(@id, 'wm:')][</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>checkMessages_messageXpath</Destination>
+      <Source1>
+        <Variable>checkMessages_messageXpath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkMessages_numberOfMessagesInConversation</Variable>
+      </Source2>
+    </CatenateString>
+	
+	<CatenateString>
+      <Destination>checkMessages_messageUserLinkXpath</Destination>
+      <Source1>
+        <Variable>checkMessages_messageXpath</Variable>
+      </Source1>
+      <Source2>]/div[2]/div[2]/div[2]/strong/a</Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>checkMessages_messageXpath</Destination>
+      <Source1>
+        <Variable>checkMessages_messageXpath</Variable>
+      </Source1>
+      <Source2>]/div[2]/div[2]/div[2]/div/div</Source2>
+    </CatenateString>
+	
+	<Condition>
+		<True>MESSAGE FOUND</True>
+		<False>PREPARE TO NEXT MESSAGE</False>
+	</Condition>
+	<GetItem name="checkMessages_currentMessageUser">
+		<ParentElement>checkMessages_conversationMessages</ParentElement>
+		<SearchType>XPATH</SearchType>
+		<SearchValue>
+			<Variable>checkMessages_messageUserLinkXpath</Variable>
+		</SearchValue>
+    </GetItem>
+	
+	<Label>MESSAGE FOUND</Label>
+	<GetLinkFromWebItem>
+      <Source>checkMessages_currentMessageUser</Source>
+      <Destination>checkMessages_currentMessageUserLink</Destination>
+    </GetLinkFromWebItem>
+	
+	<!-- if current message was written by this user, go to next conversation -->
+	<Condition>
+		<True>PREPARE FOR MORE CONVERSATIONS</True>
+		<False>CHECK MESSAGE</False>
+	</Condition>
+	<CompareVariables>
+      <Variable1>checkMessages_thisUserLink</Variable1>
+      <Variable2>checkMessages_currentMessageUserLink</Variable2>
+    </CompareVariables>
+	
+	<Label>CHECK MESSAGE</Label>
+	<GetItem name="checkMessages_currentMessageText">
+		<ParentElement>checkMessages_conversationMessages</ParentElement>
+		<SearchType>XPATH</SearchType>
+		<SearchValue>
+			<Variable>checkMessages_messageXpath</Variable>
+		</SearchValue>
+    </GetItem>
+	
+	<!-- Here the message should be checked! -->	
+	<GetTextFromWebItem>
+      <Source>checkMessages_currentMessageText</Source>
+      <Destination>checkMessages_messageText</Destination>
+    </GetTextFromWebItem>
+	
+	<!-- Check Triggers, if Validated, Call ReactToPrivateMessage sequence -->
+	<Condition>
+		<True>PREPARE FOR MORE CONVERSATIONS</True>
+		<False>PREPARE TO NEXT MESSAGE</False>
+	</Condition>
+    <CheckTriggers>
+      <TriggerType>privateMessage</TriggerType>
+      <VariableName>checkMessages_messageText</VariableName>
+      <Reaction>reactToPrivateMessage</Reaction>
+    </CheckTriggers>
+	
+	<Label>PREPARE TO NEXT MESSAGE</Label>
+	<DecreaseVariable>
+      <Destination>checkMessages_numberOfMessagesInConversation</Destination>
+      <Quantity>1</Quantity>
+    </DecreaseVariable>
+	
+	<Jump>NEXT MESSAGE</Jump>
+	
+	<Label>PREPARE FOR MORE CONVERSATIONS</Label>
+	<DecreaseVariable>
+		<Destination>checkMessages_numberOfConversationsInteger</Destination>
+		<Quantity>1</Quantity>
+	</DecreaseVariable>
+	
+    <Condition>
+      <True>MORE CONVERSATIONS</True>
+      <False>NO MORE CONVERSATIONS</False>
+    </Condition>
+    <GreaterThan>
+      <Source1>
+        <Variable>checkMessages_numberOfConversationsInteger</Variable>
+      </Source1>
+      <Source2>
+		<Variable>zeroConstant</Variable>
+	  </Source2>
+    </GreaterThan>
+	
+	<Label>NO MORE CONVERSATIONS</Label>
+	<Sleep>0</Sleep>
+  </Sequence>
+  
+  <!-- React to a wall post -->
+  <Sequence name="reactToWallPost">
+    <SetVariable>
+      <Destination>respondToPost_responseString</Destination>
+      <String></String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>
+        <Variable>SystemReactionValue</Variable>
+      </Source2>
+    </CatenateString>
+
+    <SetVariable>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>respondToPost_commentButtonXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </Source1>
+      <Source2>]/div/div[5]/form/div/div/span[2]/a/span</Source2>
+    </CatenateString>
+
+    <Label>PRESS COMMENT BUTTON</Label>
+    <GetItem name="reactToWallPost_commentButton">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>respondToPost_commentButtonXPath</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <Sleep>500</Sleep>
+    
+    <Click>
+      <Destination>reactToWallPost_commentButton</Destination>
+    </Click>
+
+    <Sleep>1000</Sleep>
+
+    <GetActiveItem name="reactToWallPost_commentTextArea"></GetActiveItem>
+
+    <Condition>
+      <True>WRITE RESPONSE</True>
+      <False>PRESS COMMENT BUTTON</False>
+    </Condition>
+    <CheckItemVisible>
+      <ItemName>reactToWallPost_commentTextArea</ItemName>
+    </CheckItemVisible>
+
+    <Label>WRITE RESPONSE</Label>
+    <CatenateString>
+      <Destination>respondToPost_responseString</Destination>
+      <Source1>
+        <Variable>respondToPost_responseString</Variable>
+      </Source1>
+      <Source2>\n</Source2>
+    </CatenateString>
+
+    <Type>
+      <Destination>reactToWallPost_commentTextArea</Destination>
+      <String>
+        <Variable>respondToPost_responseString</Variable>
+      </String>
+    </Type>
+
+    <Label>LOG LINK</Label>
+    <SetVariable>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <String>//div[</String>
+    </SetVariable>
+
+    <CatenateString>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </Source1>
+      <Source2>
+        <Variable>checkWall_tempWallItemCounter</Variable>
+      </Source2>
+    </CatenateString>
+
+    <CatenateString>
+      <Destination>respondToPost_wallPostXPath</Destination>
+      <Source1>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </Source1>
+      <Source2>]/div/div[2]/div/div/div/div[2]/div/span/span/a</Source2>
+    </CatenateString>
+
+    <GetItem name="respondToPost_wallPost">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>
+        <Variable>respondToPost_wallPostXPath</Variable>
+      </SearchValue>
+    </GetItem>
+
+    <GetLinkFromWebItem>
+      <Source>respondToPost_wallPost</Source>
+      <Destination>respondToPost_wallPostLink</Destination>
+    </GetLinkFromWebItem>
+
+    <LogLink>
+      <Message>The following is a link to a wall post that was automatically responded.</Message>
+      <Link>
+        <Variable>respondToPost_wallPostLink</Variable>
+      </Link>
+    </LogLink>
+    
+  </Sequence>
+
+  <!-- React to a private message -->
+  <Sequence name="reactToPrivateMessage">
+	<GetItem name="respondToMessage_textArea">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//textarea[@name='message_body']</SearchValue>
+    </GetItem>
+	
+	<Click>
+      <Destination>respondToMessage_textArea</Destination>
+    </Click>
+	
+	<Type>
+      <Destination>respondToMessage_textArea</Destination>
+      <String>
+        <Variable>SystemReactionValue</Variable>
+      </String>
+    </Type>	
+	
+	<GetItem name="respondToMessage_sendButton">
+      <ParentElement></ParentElement>
+      <SearchType>XPath</SearchType>
+      <SearchValue>//div[2]/div[2]/label</SearchValue>
+    </GetItem>
+	
+	<Click>
+      <Destination>respondToMessage_sendButton</Destination>
+    </Click>
+  </Sequence>
+  
+  <!-- Sequences that run on start -->
+  <Start>
+    <Sequence>setup</Sequence>
+    <Sequence>login</Sequence>
+	<Sequence>checkMessages</Sequence>
+  </Start>
+  
+<!-- Timers -->
+  <!-- <Timer>
+    <SequenceName>checkWall</SequenceName>
+    <Period>1</Period>
+  </Timer> -->
+  
+</Plugin>
+

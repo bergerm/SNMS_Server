@@ -22,7 +22,7 @@ namespace SNMS_Server.RealTimeEngines
         protected override bool CommandLogic()
         {
             string temp = GetSource1() + GetSource2();
-            StringVariable newVar = new StringVariable(temp);
+            IntStrVariable newVar = new IntStrVariable(temp);
             m_variableDictionary.SetVariable(m_sDestination, newVar);
 
             return true;

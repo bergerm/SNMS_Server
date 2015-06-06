@@ -22,12 +22,12 @@ namespace SNMS_Server.RealTimeEngines
         protected override bool CommandLogic()
         {
             Variable tempVar = m_variableDictionary.GetVariable(m_sVarName);
-            if (tempVar == null || tempVar.GetVarType()!="integer")
+            if (tempVar == null || (tempVar.GetVarType() != "integer or string" && tempVar.GetVarType() != "integer"))
             {
                 return false;
             }
 
-            ((IntVariable)tempVar).Increase(m_dwIncreaseValue);
+            ((IntStrVariable)tempVar).Increase(m_dwIncreaseValue);
             m_variableDictionary.SetVariable(m_sVarName, tempVar);
             return true;
         }

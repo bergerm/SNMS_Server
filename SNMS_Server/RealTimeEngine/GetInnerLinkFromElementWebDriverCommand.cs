@@ -35,7 +35,7 @@ namespace SNMS_Server.RealTimeEngines
             }
 
             Variable oldVariable = m_variableDictionary.GetVariable(m_sDestinationVariableName);
-            if (oldVariable.GetVarType() != "string")
+            if (oldVariable.GetVarType() != "string" && oldVariable.GetVarType() != "integer or string")
             {
                 return false;
             }
@@ -50,7 +50,7 @@ namespace SNMS_Server.RealTimeEngines
                 return false;
             }
 
-            StringVariable tempVariable = new StringVariable(sInnerText);
+            IntStrVariable tempVariable = new IntStrVariable(sInnerText);
 
             m_variableDictionary.SetVariable(m_sDestinationVariableName, tempVariable);
 

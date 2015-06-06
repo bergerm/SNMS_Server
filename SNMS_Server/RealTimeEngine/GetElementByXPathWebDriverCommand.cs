@@ -52,12 +52,12 @@ namespace SNMS_Server.RealTimeEngines
                 }
 
                 m_webElementsDictionary.SetElement(m_sDestinationElementName, tempElement);
-                m_variableDictionary.SetVariable("systemResultString", new StringVariable("true"));
+                m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("true"));
             }
             catch (Exception e)
             {
                 m_webElementsDictionary.SetElement(m_sDestinationElementName, null);
-                m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
+                m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("false"));
             }
 
             return true;

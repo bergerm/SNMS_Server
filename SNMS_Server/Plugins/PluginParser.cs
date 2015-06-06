@@ -564,11 +564,11 @@ namespace SNMS_Server.Plugins
                 switch (varType)
                 {
                     case "string":
-                        variable = new StringVariable("");
+                        variable = new IntStrVariable("");
                         break;
 
                     case "integer":
-                        variable = new IntVariable(0);
+                        variable = new IntStrVariable(0);
                         break;
 
                     default:
@@ -598,11 +598,11 @@ namespace SNMS_Server.Plugins
                 switch (varType)
                 {
                     case "string":
-                        variable = new StringVariable(varValue, true);
+                        variable = new IntStrVariable(varValue, true);
                         break;
 
                     case "integer":
-                        variable = new IntVariable(Int32.Parse(varValue), true);
+                        variable = new IntStrVariable(Int32.Parse(varValue), true);
                         break;
 
                     default:

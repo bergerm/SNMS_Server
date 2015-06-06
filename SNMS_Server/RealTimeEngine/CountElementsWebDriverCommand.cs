@@ -42,19 +42,19 @@ namespace SNMS_Server.RealTimeEngines
 
                 if (count > 0)
                 {
-                    m_variableDictionary.SetVariable("systemResultString", new StringVariable("true"));
+                    m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("true"));
                 }
                 else
                 {
-                    m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
+                    m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("false"));
                 }
 
-                m_variableDictionary.SetVariable(m_sDestinationVariable, new IntVariable(count));
+                m_variableDictionary.SetVariable(m_sDestinationVariable, new IntStrVariable(count));
             }
             catch (Exception e)
             {
-                m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
-                m_variableDictionary.SetVariable(m_sDestinationVariable, new IntVariable(0));
+                m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("false"));
+                m_variableDictionary.SetVariable(m_sDestinationVariable, new IntStrVariable(0));
             }
 
             return true;

@@ -26,14 +26,14 @@ namespace SNMS_Server.RealTimeEngines
                 WebDriver.WebDriverElement element = m_webElementsDictionary.GetElement(m_sElementName.ToLower());
                 if (element == null || element.GetIWebElement().Displayed == false)
                 {
-                    m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
+                    m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("false"));
                     return true;
                 }
-                m_variableDictionary.SetVariable("systemResultString", new StringVariable("true"));
+                m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("true"));
             }
             catch(Exception e)
             {
-                m_variableDictionary.SetVariable("systemResultString", new StringVariable("false"));
+                m_variableDictionary.SetVariable("systemResultString", new IntStrVariable("false"));
                 return false;
             }
 

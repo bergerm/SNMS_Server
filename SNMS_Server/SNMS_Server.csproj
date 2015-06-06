@@ -124,6 +124,7 @@
     <Compile Include="Triggers\Trigger.cs" />
     <Compile Include="Triggers\TriggerGroup.cs" />
     <Compile Include="Triggers\TriggerGroupDictionary.cs" />
+    <Compile Include="Variables\IntStrVariable.cs" />
     <Compile Include="Variables\StringVariable.cs" />
     <Compile Include="Variables\IntVariable.cs" />
     <Compile Include="Variables\Variable.cs" />
@@ -133,16 +134,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="backup_FacebookPlugin_old.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="backup_FacebookPlugin.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="CompleteFacebookPlugin.xml" />
     <Content Include="WorkingPlugins\FacebookPlugin.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="sampleCommands.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AutomationEngine\" />

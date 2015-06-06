@@ -43,7 +43,7 @@ namespace SNMS_Server.RealTimeEngines
                 sResult = "false";
             }
 
-            m_variableDictionary.SetVariable("systemResultString", new StringVariable(sResult));
+            m_variableDictionary.SetVariable("systemResultString", new IntStrVariable(sResult));
             return true;
         }
 
